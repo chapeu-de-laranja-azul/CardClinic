@@ -18,6 +18,11 @@ public class Card : MonoBehaviour
         gm = FindObjectOfType<GameManager>();           // procurando o objeto GameManager e colocamdo ele na variavel
     }
 
+    private void Update()
+    {
+        gameObject.GetComponent<SpriteRenderer>().sortingOrder = handIndex;
+    }
+
     private void OnMouseDown()                          // quando clicar com o mouse vai executar essa classe
     {
         if(hasBeenPlayed == false){                     // verificando se nao foi jogada a carta
@@ -25,7 +30,6 @@ public class Card : MonoBehaviour
             hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
             gm.availableCardSlots[handIndex] = true;    // avisando que aquele slot de carta esta vazio
             gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
-
                                                         // desativando a carta de amostra
             cartaExpandida.GetComponent<SpriteRenderer>().sprite = null; 
             gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
