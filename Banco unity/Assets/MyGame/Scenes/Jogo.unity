@@ -189,7 +189,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &28750296 stripped
@@ -427,7 +427,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &182987632 stripped
@@ -782,7 +782,7 @@ GameObject:
   - component: {fileID: 493203356}
   - component: {fileID: 493203357}
   m_Layer: 0
-  m_Name: Sample
+  m_Name: CardSample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -796,12 +796,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 493203355}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.6672523, y: 0.22236234, z: 9.964254}
+  m_LocalPosition: {x: -3.8614, y: 0.092362344, z: 0}
   m_LocalScale: {x: 2.9, y: 2.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1224077038}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &493203357
 SpriteRenderer:
@@ -921,7 +921,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &495132406 stripped
@@ -1099,7 +1099,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &721985012 stripped
@@ -1306,7 +1306,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &809962377 stripped
@@ -1395,7 +1395,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &852995579 stripped
@@ -1469,7 +1469,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &873544023 stripped
@@ -1795,7 +1795,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &937155379 stripped
@@ -2092,7 +2092,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1070111753 stripped
@@ -2225,7 +2225,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1196261167 stripped
@@ -2244,38 +2244,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd5892beb68fc6444b2eb9c5c24e084e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1224077037
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1224077038}
-  m_Layer: 0
-  m_Name: CardsSample
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1224077038
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1224077037}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.1941476, y: -0.13, z: -9.964254}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 493203356}
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1394466522 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 818514720225894103, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
@@ -2358,7 +2326,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1420852404 stripped
@@ -2432,7 +2400,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1446255175 stripped
@@ -2709,7 +2677,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1535615557 stripped
@@ -2794,7 +2762,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1550463166 stripped
@@ -3000,7 +2968,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1846855272 stripped
@@ -3074,7 +3042,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1913384884 stripped
@@ -3163,7 +3131,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &1920774160 stripped
@@ -3281,7 +3249,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &2024328453 stripped
@@ -3450,7 +3418,7 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
 --- !u!4 &2146027160 stripped
@@ -3539,6 +3507,6 @@ PrefabInstance:
     - target: {fileID: 3700472175180767349, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
       propertyPath: cartaExpandida
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 493203355}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d6890534c5923b4a83204a7cd31f8d8, type: 3}
