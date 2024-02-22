@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
                             }
                             else
                             {
-                                buttonD.GetComponent<Image>().sprite = null;// colocando a imagem de discarte vazio
+                                buttonD.GetComponent<Image>().sprite = imageSemcard;// colocando a imagem de discarte vazio
                                 return;                                     // parando o looping
                             }
                             
