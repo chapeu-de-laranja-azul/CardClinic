@@ -26,14 +26,16 @@ public class Card : MonoBehaviour
             gm.availableCardSlots[handIndex] = true;    // avisando que aquele slot de carta esta vazio
             gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
 
-            cartaExpandida.gameObject.SetActive(false); // desativando a carta de amostra
+                                                        // desativando a carta de amostra
+            cartaExpandida.GetComponent<SpriteRenderer>().sprite = null; 
             gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
         }
     }
 
     private void OnMouseEnter()                         // classe para detectar a entrada do mouse 1 vez
     {
-        cartaExpandida.gameObject.SetActive(true);      // ativando a carta de amostra
+                                                        // alterando o sprite vazio para o da carta que o mouse esta em cima
+        cartaExpandida.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
     }
 
     // tirar a maioria das imagens e deixar so uma grande carta de amostra para servir como exemplo e so passar o sprite da carta que o mouse esta em cima
@@ -42,7 +44,7 @@ public class Card : MonoBehaviour
     // usar box colaider
     private void OnMouseExit()                          // classe para detectar a saida do mouse 1 vez
     {
-        cartaExpandida.gameObject.SetActive(false);     // desativando a carta de amostra
+        cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;     // desativando a carta de amostra
     }
 
 }
