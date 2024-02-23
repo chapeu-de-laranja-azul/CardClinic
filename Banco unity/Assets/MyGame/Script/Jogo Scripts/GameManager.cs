@@ -5,9 +5,11 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 
+    public List<CardDysfunc> dysfunctions = new List<CardDysfunc>();                      // criando a lista de cartas de disfuncoes
     public List<Card> deck = new List<Card>();                              // criando a lista de cartas do baralho
     public List<Card> discardPile = new List<Card>();                       // criando a lista de cartas do descarte
 
+    public Transform dysfunSlots;                                           // para salvar a localizacao dos slots das dysfunctions 
     public Transform[] cardSlots;                                           // para salvar a localizacao dos slots
     public bool[] availableCardSlots;                                       // para verificar se os slots estao vazios ou nao
 
@@ -19,7 +21,7 @@ public class GameManager : MonoBehaviour
     private Card lastCard;                                                  // salvando a ultima carta descartada
     private Card penultima;                                                 // salvando a penultima carta descartada
     public Button buttonD;                                                  // para armazenar o botao de descarte
-    public Sprite imageSemcard;
+    public Sprite imageSemcard;                                             // salvando imagem vazia de carta
 
     public void Start()                                                     // classe executada quando comeca o jogo, 1 vez e primeira que as outras
     {
@@ -36,6 +38,16 @@ public class GameManager : MonoBehaviour
                 availableCardSlots[i] = false;                              // avisando que o slot esta ocupado
                 deck.Remove(randCard);                                      // removendo a carta do deck
         }
+
+
+        CardDysfunc randCardD = dysfunctions[Random.Range(0, dysfunctions.Count)];
+
+            randCardD.gameObject.SetActive(true);
+
+            randCardD.transform.position = dysfunSlots.position;
+
+            dysfunctions.Remove(randCardD);
+
     }
 
     public void DrawCard()                                                  // classe para quando for clicado o botao de compra de carta do baralho
@@ -82,7 +94,7 @@ public class GameManager : MonoBehaviour
                 {
                     
                     lastCard = discardPile[i];                              // salvando a ultima carta do discarte
-                    penultima = null;                                       // frempre indicando a variavel penultima camo null
+                    penultima = null;                                       // sempre indicando a variavel penultima camo null
                     if(i-1 >=  0)                                           // verificando se nao e a ultima carta
                     {
                         penultima = discardPile[i-1];                       // pegando a penultima carta
@@ -110,8 +122,8 @@ public class GameManager : MonoBehaviour
                                 return;
                             }
                             else
-                            {
-                                buttonD.GetComponent<Image>().sprite = imageSemcard;// colocando a imagem de discarte vazio
+                            {                                               // colocando a imagem de discarte vazio
+                                buttonD.GetComponent<Image>().sprite = imageSemcard;
                                 return;                                     // parando o looping
                             }
                             
@@ -130,7 +142,8 @@ public class GameManager : MonoBehaviour
     {
         discardPile.Add(card);                                              // adicionando a carta na pilha de discarte
 
-        buttonD.GetComponent<Image>().sprite = card.GetComponent<SpriteRenderer>().sprite; // para trocar a imagem do botao para a da carta
+                                                                            // para trocar a imagem do botao para a da carta
+        buttonD.GetComponent<Image>().sprite = card.GetComponent<SpriteRenderer>().sprite; 
     
     }
 

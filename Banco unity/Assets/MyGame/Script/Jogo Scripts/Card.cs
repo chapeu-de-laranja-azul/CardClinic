@@ -12,14 +12,14 @@ public class Card : MonoBehaviour
     public GameObject cartaExpandida;                   // variavel para salvar a carta de amostra
 
     private GameManager gm;                             // criando uma variavel do tipo GameManager com nome de gm
-
+    
     private void Start()                                // classe executada quando comeca o jogo, 1 vez e primeira que as outras
     {
         gm = FindObjectOfType<GameManager>();           // procurando o objeto GameManager e colocamdo ele na variavel
     }
 
     private void Update()
-    {
+    {                                                   // para colocar a order il layer das cartas de acordo com o local delas
         gameObject.GetComponent<SpriteRenderer>().sortingOrder = handIndex;
     }
 
@@ -30,8 +30,9 @@ public class Card : MonoBehaviour
             hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
             gm.availableCardSlots[handIndex] = true;    // avisando que aquele slot de carta esta vazio
             gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+            
                                                         // desativando a carta de amostra
-            cartaExpandida.GetComponent<SpriteRenderer>().sprite = null; 
+            cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
             gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
         }
     }
@@ -48,7 +49,8 @@ public class Card : MonoBehaviour
     // usar box colaider
     private void OnMouseExit()                          // classe para detectar a saida do mouse 1 vez
     {
-        cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;     // desativando a carta de amostra
+                                                        // desativando a carta de amostra
+        cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
     }
 
 }
