@@ -39,14 +39,14 @@ public class GameManager : MonoBehaviour
                 deck.Remove(randCard);                                      // removendo a carta do deck
         }
 
-
+                                                                            // parte para colocar a carta de dysfuncao no jogo
         CardDysfunc randCardD = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-            randCardD.gameObject.SetActive(true);
+            randCardD.gameObject.SetActive(true);                           // ligando ela
 
-            randCardD.transform.position = dysfunSlots.position;
+            randCardD.transform.position = dysfunSlots.position;            // colocando na posicao
 
-            dysfunctions.Remove(randCardD);
+            dysfunctions.Remove(randCardD);                                 // removendo ela do baralho
 
     }
 
