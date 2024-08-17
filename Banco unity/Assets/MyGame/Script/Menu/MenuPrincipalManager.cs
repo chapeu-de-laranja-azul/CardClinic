@@ -8,18 +8,17 @@ public class MenuPrincipalManager : MonoBehaviour
 {
     [SerializeField] private string nomeDoLevelDeJogo;
     [SerializeField] private GameObject painelMenuInicial, painelOpcoes, painelLobby, painelSala;
-
+    [SerializeField] private GameObject conectionManager;
     private Conn conn;
 
     void Start()
     {
-        conn = GetComponent<Conn>();
+        conn = conectionManager.GetComponent<Conn>();//pegando um objeto do jogo e selecionando um componente dele para salvar na variavel
     }
     public void Jogar()
     {
         conn.CriarSala();
         Debug.Log("jogou");
-        //SceneManager.LoadScene(nomeDoLevelDeJogo);//carregando uma nova cena
     }
 
     public void Lobby()
