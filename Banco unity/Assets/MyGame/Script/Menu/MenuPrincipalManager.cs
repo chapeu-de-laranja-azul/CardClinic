@@ -7,31 +7,14 @@ using UnityEngine.SceneManagement;          //para utilizar controles de scena
 public class MenuPrincipalManager : MonoBehaviour
 {
     [SerializeField] private string nomeDoLevelDeJogo;
-    [SerializeField] private GameObject painelMenuInicial, painelOpcoes, painelLobby, painelSala;
-    [SerializeField] private GameObject conectionManager;
+    [SerializeField] private GameObject painelMenuInicial, painelOpcoes, painelLogin, painelSala;
+    [SerializeField] private GameObject conectionManager, painelEntrarSala, painelLob;
+    [SerializeField] private Text nomeSala;
     private Conn conn;
 
     void Start()
     {
         conn = conectionManager.GetComponent<Conn>();//pegando um objeto do jogo e selecionando um componente dele para salvar na variavel
-    }
-    public void Jogar()
-    {
-        conn.CriarSala();
-        Debug.Log("jogou");
-    }
-
-    public void Lobby()
-    {
-        painelMenuInicial.SetActive(false);
-        painelLobby.SetActive(true);
-    }
-    
-    public void Sala()
-    {
-        conn.Login();
-        painelLobby.SetActive(false);
-        painelSala.SetActive(true);
     }
 
     public void AbrirOpcoes()
@@ -40,10 +23,63 @@ public class MenuPrincipalManager : MonoBehaviour
         painelOpcoes.SetActive(true);
     }
 
+    public void AbrirLogin()
+    {
+        painelMenuInicial.SetActive(false);
+        painelLogin.SetActive(true);
+    }
+
+    public void AbrirEntrarSala()
+    {
+        conn.Login();
+        painelEntrarSala.SetActive(true);
+        painelLogin.SetActive(false);
+    }
+
+    public void AbrirCriarSala()
+    {
+        conn.Login();
+        painelLogin.SetActive(false);
+        painelSala.SetActive(true);
+    }
+
+    public void AbrirLob()
+    {
+        painelSala.SetActive(false);
+        painelLob.SetActive(true);
+        conn.CriarSala();
+    }
+
     public void FecharOpcoes()
     {
         painelMenuInicial.SetActive(true);
         painelOpcoes.SetActive(false);
+    }
+
+    public void FecharLogin()
+    {
+        painelLogin.SetActive(false);
+        painelMenuInicial.SetActive(true);
+    }
+
+    public void FecharEntrarSala()
+    {
+        conn.DisconnectPhoton();
+        painelEntrarSala.SetActive(false);
+        painelLogin.SetActive(true);
+    }
+
+    public void FecharSala ()
+    {
+        painelLogin.SetActive(true);
+        painelSala.SetActive(false);
+        conn.DisconnectPhoton();
+    }
+
+    public void FecharLob()
+    {
+        painelLob.SetActive(false);
+        painelSala.SetActive(true);
     }
 
     public void SairJogo()

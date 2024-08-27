@@ -10,7 +10,7 @@ public class Conn : MonoBehaviourPunCallbacks           //para poder utilizar as
 {
                                                         //utilizando para obter as informações do nomes das sala e jogador
     [SerializeField] private TMP_InputField nomeJogador, nomeSala;
-    [SerializeField] private Text txtNickName;          //para salvar um componente da unity do tipo texto
+    [SerializeField] private TMP_Text txtNickName, txtSalaName;          //para salvar um componente da unity do tipo texto
 
     public static Conn instance;
 
@@ -41,7 +41,23 @@ public class Conn : MonoBehaviourPunCallbacks           //para poder utilizar as
     public void CriarSala()
     {
                                                         //criando um sala de jogo (nome da sala, opções da sala criada, tipo do lobby a ser criado)
-        PhotonNetwork.JoinOrCreateRoom(nomeSala.text,new RoomOptions(),TypedLobby.Default);
+        PhotonNetwork.CreateRoom(nomeSala.text,new RoomOptions(),TypedLobby.Default);
+
+        txtSalaName.text = nomeSala.text;
+        txtNickName.text = nomeJogador.text;
+    }
+
+    public void StartJogo()
+    {
+        if (PhotonNetwork.IsMasterClient)               //Se for o Cliente Master (o jogador que criou a sala)
+        {
+            PhotonNetwork.LoadLevel(1);                 //Este método envolve o carregamento de um nível de forma assíncrona e a pausa das mensagens de rede durante o processo
+        }
+    }
+
+    public void DisconnectPhoton()
+    {
+        PhotonNetwork.Disconnect();
     }
 
 
@@ -49,7 +65,7 @@ public class Conn : MonoBehaviourPunCallbacks           //para poder utilizar as
     public override void OnConnectedToMaster()          //Chamado quando o cliente está conectado ao Servidor Mestre e pronto para matchmaking e outras tarefas.
     {
         Debug.Log("Conectado");
-        PhotonNetwork.JoinLobby();                      //chamando a função de entrar na sala
+        
     }
                                                         //chamada quando o jogador desconectar da sala
     public override void OnDisconnected(DisconnectCause cause)
@@ -67,12 +83,6 @@ public class Conn : MonoBehaviourPunCallbacks           //para poder utilizar as
         Debug.Log("Entrou em uma sala");
         print(PhotonNetwork.CurrentRoom.PlayerCount);   //mostrar o numero de players que estão na sala
         print(PhotonNetwork.CurrentRoom.Name);          //mostrar o nome da sala
-
-        if (PhotonNetwork.IsMasterClient)               //Se for o Cliente Master (o jogador que criou a sala)
-        {
-            PhotonNetwork.LoadLevel(1);                 //Este método envolve o carregamento de um nível de forma assíncrona e a pausa das mensagens de rede durante o processo
-        }
-    
     }
     #endregion
 }
