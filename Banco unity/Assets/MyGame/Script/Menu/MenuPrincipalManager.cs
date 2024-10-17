@@ -9,7 +9,7 @@ public class MenuPrincipalManager : MonoBehaviour
     [SerializeField] private string nomeDoLevelDeJogo;
     [SerializeField] private GameObject painelMenuInicial, painelOpcoes, painelLogin, painelSala;
     [SerializeField] private GameObject conectionManager, painelEntrarSala, painelLob;
-    [SerializeField] private Text nomeSala;
+
     private Conn conn;
 
     void Start()
@@ -31,14 +31,17 @@ public class MenuPrincipalManager : MonoBehaviour
 
     public void AbrirEntrarSala()
     {
-        conn.Login();
+        //conn.Connect(); VERIFICAR COMO FICA MELHOR (DEIXAR AQUI OU NO conn.Connect())
+        conn.SalasDisponiveis();
+
         painelEntrarSala.SetActive(true);
         painelLogin.SetActive(false);
     }
 
     public void AbrirCriarSala()
     {
-        conn.Login();
+        conn.Connect();
+
         painelLogin.SetActive(false);
         painelSala.SetActive(true);
     }
@@ -47,7 +50,9 @@ public class MenuPrincipalManager : MonoBehaviour
     {
         painelSala.SetActive(false);
         painelLob.SetActive(true);
+        conn.photonView.RPC("ObterListaJogadores", Photon.Pun.RpcTarget.All);
         conn.CriarSala();
+        
     }
 
     public void FecharOpcoes()
@@ -65,19 +70,23 @@ public class MenuPrincipalManager : MonoBehaviour
     public void FecharEntrarSala()
     {
         conn.DisconnectPhoton();
+        
         painelEntrarSala.SetActive(false);
         painelLogin.SetActive(true);
     }
 
     public void FecharSala ()
     {
+        conn.DisconnectPhoton();
+
         painelLogin.SetActive(true);
         painelSala.SetActive(false);
-        conn.DisconnectPhoton();
     }
 
     public void FecharLob()
     {
+        conn.SairRoom();
+
         painelLob.SetActive(false);
         painelSala.SetActive(true);
     }
