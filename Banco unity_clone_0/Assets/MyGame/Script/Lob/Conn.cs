@@ -36,10 +36,26 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     /// </summary>
     [SerializeField] private byte maxPlayerPerRoom = 4;
 
+    /// <summary>
+    /// Variavel para salvar as prefebs que vão ser instanciadas no Lobby
+    /// </summary>
+    [SerializeField] private ItemSala itemSalaPrefab;
+    
+    /// <summary>
+    /// guardando qual vai ser as posições que vão ser instanceados os objetos no Lobby
+    /// </summary>
+    [SerializeField] private Transform contentObject;
 
-    public ItemSala itemSalaPrefab;
+    /// <summary>
+    /// Uma lista para armazenar as Listas de salas para o Lobby
+    /// </summary>
     List<ItemSala> itemSalaLista = new List<ItemSala>();
-    public Transform contentObject;
+
+    /// <summary>
+    /// Variaveis para criação de um anti-spam
+    /// </summary>
+    private float timeBetweenUpdates = 1.5f;
+    private float nextUpdateTime;
 
     #endregion
 
@@ -57,7 +73,7 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     public static Conn instance;
 
     #endregion
-
+    
     #region MonoBehaviour CallBacks
 
     /// <summary>
@@ -92,7 +108,7 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
 
     #endregion
 
-    #region ontrole dos Paineis do jogo
+    #region Controle dos Paineis do jogo
 
     public void AbrirOpcoes()
     {
@@ -138,6 +154,7 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
 
     public void AbrirLobby()
     {
+        
         painelMenuMultiplayer.SetActive(false);
         painelLobby.SetActive(true);
     }
@@ -145,6 +162,13 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     public void FecharLobby()
     {
         painelMenuMultiplayer.SetActive(true);
+        painelLobby.SetActive(false);
+    }
+
+    public void AbrirSalaLobby()
+    {
+        //Abrindo o painel de sala de jogo (do Lobby)
+        painelRoom.SetActive(true);
         painelLobby.SetActive(false);
     }
 
@@ -186,7 +210,6 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     public void DisconnectPhoton()
     {
         PhotonNetwork.Disconnect();
-
     }
 
     /// <summary>
@@ -203,7 +226,9 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
             // Criando a sala com o nome e as opções escolhidas no lobby padrão
             PhotonNetwork.CreateRoom(nomeSala.text, roomOptions, TypedLobby.Default);
 
-            txtSalaName.text = nomeSala.text;
+            //Abrindo o painel de sala de jogo (do Criar Room)
+            painelRoom.SetActive(true);
+            painelCriarRoom.SetActive(false);
         }
         else
         {
@@ -234,6 +259,7 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
             lista += player.NickName + "\n";
         }
 
+        txtSalaName.text = PhotonNetwork.CurrentRoom.Name;
         txtNickName.text = lista;
     }
 
@@ -243,6 +269,7 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     public void SairRoom()
     {
         PhotonNetwork.LeaveRoom();
+
     }
 
     /// <summary>
@@ -250,18 +277,33 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     /// </summary>
     public void SalasDisponiveis(List<RoomInfo> list)
     {
-        
-        foreach(ItemSala item in itemSalaLista)
+        //Destruindo todas as prefebs de ItemSala (os botões)
+        foreach (ItemSala item in itemSalaLista)
         {
             Destroy(item.gameObject);
+            
         }
+
+        //E limpando a lista (para evita instanciar os botões antigos)
         itemSalaLista.Clear();
 
-        foreach (RoomInfo room in list)
+        //Verificando cada sala da lista de salas aonde remove da lista as salas que foram removidas
+        //E cria um botão para cada sala que foi criada com o nome da sala na frente
+        for(int i=0; i<list.Count; i++)
         {
-            ItemSala newSala = Instantiate(itemSalaPrefab, contentObject);
-            newSala.SetandoNomeSala(room.Name);
-            itemSalaLista.Add(newSala);
+            RoomInfo room = list[i];
+
+            if (room.RemovedFromList)
+            {
+                list.Remove(room);
+            }
+            else
+            {
+                ItemSala newSala = Instantiate(itemSalaPrefab, contentObject);
+                newSala.SetandoNomeSala(room.Name);
+                itemSalaLista.Add(newSala);
+            }
+            
         }
         
     }
@@ -333,6 +375,9 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     {
         //UTILIZAR PARA DEIXAR O PLAYER EM ESTADO INATIVO (AONDE PODE RETORNAR PARA O JOGO)
         ObterListaJogadores();
+
+        //Joinando em um Lobby apos logar no Photon #IMPORTANTE (Necessario para mostrar as listas de salas)
+        PhotonNetwork.JoinLobby();
     }
 
     #endregion
@@ -344,20 +389,18 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     /// </summary>
     public override void OnJoinedRoom()
     {
+        //Saindo do Lobby apos entrar em uma sala #IMPORTANTE (Necessario para mostrar as listas de salas)
+        PhotonNetwork.LeaveLobby();
+
         Debug.Log("Entrou em uma sala");
         
         // mostrar o numero de players que estão na sala
         print(PhotonNetwork.CurrentRoom.PlayerCount);
 
         //mostrar o nome da sala
-        print(PhotonNetwork.CurrentRoom.Name);          
+        print(PhotonNetwork.CurrentRoom.Name);
         
         ObterListaJogadores();
-
-        //Abrindo o painel de sala de jogo
-        painelRoom.SetActive(true);
-        painelCriarRoom.SetActive(false);
-
     }
 
     /// <summary>
@@ -366,6 +409,9 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     public override void OnLeftRoom()
     {
         //UTILIZAR PARA QUANDO O PLAYER AIVAMENTE SAIA DO JOGO
+
+        //Joinando em um Lobby apos logar no Photon #IMPORTANTE (Necessario para mostrar as listas de salas)
+        PhotonNetwork.JoinLobby();
 
         // Fechando o painel de Sala e retornando para o MenuMultiplayer
         painelRoom.SetActive(false);
@@ -403,7 +449,13 @@ public class Conn : MonoBehaviourPunCallbacks   //para poder utilizar as chamada
     /// <param name="roomList"></param>
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
-        SalasDisponiveis(roomList);
+
+        if (Time.time >= nextUpdateTime)
+        {
+            SalasDisponiveis(roomList);
+            nextUpdateTime = Time.time + timeBetweenUpdates;
+        }
+
     }
     
     #endregion

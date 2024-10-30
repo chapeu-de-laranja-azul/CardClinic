@@ -22,6 +22,7 @@ public class ItemSala : MonoBehaviour
     public void ClickItem()
     {
         conn.EntrandoSala(salaNome.text);
+        conn.AbrirSalaLobby();
     }
 
 }
