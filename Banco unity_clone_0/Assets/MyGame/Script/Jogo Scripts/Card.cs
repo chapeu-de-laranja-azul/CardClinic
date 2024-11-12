@@ -5,7 +5,7 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
 
-    public bool hasBeenPlayed;                          // variavel para verificar se ja jogou a carta
+    public bool hasBeenPlayed;                          // variavel para evitar do jogador clicar varias vezes na mesma carta
 
     public int handIndex;                               // variavel para guardar em qual slot esta a carta
 
@@ -19,22 +19,77 @@ public class Card : MonoBehaviour
     }
 
     private void Update()
-    {                                                   // para colocar a order il layer das cartas de acordo com o local delas
+    {                   
+        // CORRIGIR ERRO DO HAND INDEX
+        // para colocar a order il layer das cartas de acordo com o local delas
         gameObject.GetComponent<SpriteRenderer>().sortingOrder = handIndex;
     }
 
     private void OnMouseDown()                          // quando clicar com o mouse vai executar essa classe
     {
-        if(hasBeenPlayed == false){                     // verificando se nao foi jogada a carta
-            transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
-            hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
-            gm.availableCardSlots[handIndex] = true;    // avisando que aquele slot de carta esta vazio
-            gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
-            
-                                                        // desativando a carta de amostra
-            cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
-            gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+        switch (gm.rodadaDoJogador)
+        {
+            case 0:
+                if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl1)
+                { // verificando se nao foi jogada a carta
+                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
+                    hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
+
+                    gm.slotsDisponiveisCartasPlayer1[handIndex] = true;    // avisando que aquele slot de carta esta vazio
+                    gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+
+                    // desativando a carta de amostra
+                    cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+                    gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+                }
+                break;
+
+            case 1:
+                if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl2)
+                { // verificando se nao foi jogada a carta
+                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
+                    hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
+
+                    gm.slotsDisponiveisCartasPlayer2[handIndex] = true;    // avisando que aquele slot de carta esta vazio
+                    gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+
+                    // desativando a carta de amostra
+                    cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+                    gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+                }
+                break;
+
+            case 2:
+                if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl3)
+                { // verificando se nao foi jogada a carta
+                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
+                    hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
+
+                    gm.slotsDisponiveisCartasPlayer3[handIndex] = true;    // avisando que aquele slot de carta esta vazio
+                    gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+
+                    // desativando a carta de amostra
+                    cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+                    gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+                }
+                break;
+
+            case 3:
+                if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl4)
+                { // verificando se nao foi jogada a carta
+                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
+                    hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
+
+                    gm.slotsDisponiveisCartasPlayer4[handIndex] = true;    // avisando que aquele slot de carta esta vazio
+                    gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+
+                    // desativando a carta de amostra
+                    cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+                    gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+                }
+                break;
         }
+
     }
 
     private void OnMouseEnter()                         // classe para detectar a entrada do mouse 1 vez
