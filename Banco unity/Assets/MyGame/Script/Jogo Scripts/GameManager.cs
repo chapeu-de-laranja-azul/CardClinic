@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 public class GameManager : MonoBehaviour
 {
 
@@ -30,146 +31,191 @@ public class GameManager : MonoBehaviour
     public int layerPl2 = 8;
     public int layerPl3 = 9;
     public int layerPl4 = 10;
+    public int rodada = 0;
 
     private Card lastCard;                                                  // salvando a ultima carta descartada
     private Card penultima;                                                 // salvando a penultima carta descartada
     public Button buttonD;                                                  // para armazenar o botao de descarte
+    public TextMeshProUGUI contador;
     public Sprite imageSemcard;                                             // salvando imagem vazia de carta
 
-    public void Start()                                                     // classe executada quando comeca o jogo, 1 vez e primeira que as outras
+    /// <summary>
+    /// classe executada quando comeca o jogo, 1 vez e primeira que as outras
+    /// </summary>
+    public void Start()
     {
-        for (int z = 0; z < numPlayerNoJogo; z++) // loop para entregar todas as cartas para os 4 players
+        // loop para entregar todas as cartas do inicio do jogo (para o numero de jogadores que forem jogar)
+        for (int z = 0; z < numPlayerNoJogo; z++)
         {
-            switch (z) // Definido qual player vai ser estregue as cartas
+            // Definido qual player vai ser estregue as cartas
+            switch (z)
             {
-                case 0:     //Entregando carta para o player 1
+                // Entregando as cartas para o player 1
+                case 0:
 
-                    for (int i = 0; i < startingCards; i++)                              // colocando o numero de cartas iniciais
+                    // entregando o numero de cartas iniciais, que foi definido antes
+                    for (int i = 0; i < startingCards; i++)
                     {
-                        Card randCard = deck[Random.Range(0, deck.Count)];              // salvando uma carta aleatoria que esta no baralho
+                        // salvando uma carta aleatoria que esta no baralho
+                        Card randCard = deck[Random.Range(0, deck.Count)];
 
+                        // Definindo a camada do player - mostrando a carta - e salvando em qual slot da mão ela ficara
                         randCard.gameObject.layer = layerPl1;
-                        randCard.gameObject.SetActive(true);                        // vou mostrar a carta
-                        randCard.handIndex = i;                                     // e salvar em qual slot ela esta
+                        randCard.gameObject.SetActive(true);
+                        randCard.handIndex = i;
 
-                        //Colocando a carta na posição e rotação certa
+                        //Colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = cardSlotsPlayer1[i].position;
                         randCard.transform.rotation = cardSlotsPlayer1[i].rotation;
 
-                        randCard.hasBeenPlayed = false;                             // avisando que a nao esta mais no baralho
+                        // Avisando que a nao esta mais no baralho
+                        randCard.hasBeenPlayed = false;
 
-                        slotsDisponiveisCartasPlayer1[i] = false;                              // avisando que o slot esta ocupado
-                        deck.Remove(randCard);                                      // removendo a carta do deck
+                        // avisando que o slot esta ocupado e removendo a carta do deck
+                        slotsDisponiveisCartasPlayer1[i] = false;
+                        deck.Remove(randCard);
                     }
 
                     // parte para colocar a carta de dysfuncao no jogo
                     CardDysfunc randCardD = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-                    randCardD.gameObject.SetActive(true);                           // ligando ela
+                    // mostrando ela
+                    randCardD.gameObject.SetActive(true);
 
-                    //Colocando a carta na posição e rotação certa
+                    //Colocando a carta na posição e rotação certa do slot
                     randCardD.transform.position = dysfunSlots[z].position;
                     randCardD.transform.rotation = dysfunSlots[z].rotation;
 
-                    dysfunctions.Remove(randCardD);                                 // removendo ela do baralho
+                    // removendo ela do baralho de disfunções
+                    dysfunctions.Remove(randCardD);
                     
                     break;
 
-                case 1:     //Entregando carta para o player 2
-                    for (int i = 0; i < startingCards; i++)                              // colocando o numero de cartas iniciais
+                //Entregando carta para o player 2
+                case 1:
+
+                    // entregando o numero de cartas iniciais, que foi definido antes
+                    for (int i = 0; i < startingCards; i++)
                     {
-                        Card randCard = deck[Random.Range(0, deck.Count)];              // salvando uma carta aleatoria que esta no baralho
+                        // salvando uma carta aleatoria que esta no baralho
+                        Card randCard = deck[Random.Range(0, deck.Count)];
 
+                        // Definindo a camada do player - mostrando a carta - e salvando em qual slot da mão ela ficara
                         randCard.gameObject.layer = layerPl2;
-                        randCard.gameObject.SetActive(true);                        // vou mostrar a carta
-                        randCard.handIndex = i;                                     // e salvar em qual slot ela esta
+                        randCard.gameObject.SetActive(true);
+                        randCard.handIndex = i;
 
-                        //Colocando a carta na posição e rotação certa
+                        //Colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = cardSlotsPlayer2[i].position;
                         randCard.transform.rotation = cardSlotsPlayer2[i].rotation;
 
-                        randCard.hasBeenPlayed = false;                             // avisando que a nao esta mais no baralho
+                        // avisando que a nao esta mais no baralho
+                        randCard.hasBeenPlayed = false;
 
-                        slotsDisponiveisCartasPlayer2[i] = false;                              // avisando que o slot esta ocupado
-                        deck.Remove(randCard);                                      // removendo a carta do deck
+                        // avisando que o slot esta ocupado e removendo a carta do deck
+                        slotsDisponiveisCartasPlayer2[i] = false;
+                        deck.Remove(randCard);
                     }
 
                     // parte para colocar a carta de dysfuncao no jogo
                     CardDysfunc randCardD1 = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-                    randCardD1.gameObject.SetActive(true);                           // ligando ela
+                    // mostrando ela
+                    randCardD1.gameObject.SetActive(true);
 
-                    //Colocando a carta na posição e rotação certa
+                    //Colocando a carta na posição e rotação certa do slot
                     randCardD1.transform.position = dysfunSlots[z].position;
                     randCardD1.transform.rotation = dysfunSlots[z].rotation;
 
-                    dysfunctions.Remove(randCardD1);                                 // removendo ela do baralho
+                    // removendo ela do baralho de disfunções
+                    dysfunctions.Remove(randCardD1);
                     break;
 
-                case 2:     //Entregando carta para o player 2
-                    for (int i = 0; i < startingCards; i++)                              // colocando o numero de cartas iniciais
+                //Entregando carta para o player 3
+                case 2:
+
+                    // entregando o numero de cartas iniciais, que foi definido antes
+                    for (int i = 0; i < startingCards; i++)
                     {
-                        Card randCard = deck[Random.Range(0, deck.Count)];              // salvando uma carta aleatoria que esta no baralho
+                        // salvando uma carta aleatoria que esta no baralho
+                        Card randCard = deck[Random.Range(0, deck.Count)];
 
+                        // Definindo a camada do player - mostrando a carta - e salvando em qual slot da mão ela ficara
                         randCard.gameObject.layer = layerPl3;
-                        randCard.gameObject.SetActive(true);                        // vou mostrar a carta
-                        randCard.handIndex = i;                                     // e salvar em qual slot ela esta
+                        randCard.gameObject.SetActive(true);
+                        randCard.handIndex = i;
 
-                        //Colocando a carta na posição e rotação certa
+                        //Colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = cardSlotsPlayer3[i].position;
                         randCard.transform.rotation = cardSlotsPlayer3[i].rotation;
 
-                        randCard.hasBeenPlayed = false;                             // avisando que a nao esta mais no baralho
+                        // avisando que a nao esta mais no baralho
+                        randCard.hasBeenPlayed = false;
 
-                        slotsDisponiveisCartasPlayer3[i] = false;                              // avisando que o slot esta ocupado
-                        deck.Remove(randCard);                                      // removendo a carta do deck
+                        // avisando que o slot esta ocupado e removendo a carta do deck
+                        slotsDisponiveisCartasPlayer3[i] = false;
+                        deck.Remove(randCard);
                     }
 
                     // parte para colocar a carta de dysfuncao no jogo
                     CardDysfunc randCardD2 = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-                    randCardD2.gameObject.SetActive(true);                           // ligando ela
+                    // mostrando ela
+                    randCardD2.gameObject.SetActive(true);
 
-                    //Colocando a carta na posição e rotação certa
+                    //Colocando a carta na posição e rotação certa do slot
                     randCardD2.transform.position = dysfunSlots[z].position;
                     randCardD2.transform.rotation = dysfunSlots[z].rotation;
 
-                    dysfunctions.Remove(randCardD2);                                 // removendo ela do baralho
+                    // removendo ela do baralho de disfunções
+                    dysfunctions.Remove(randCardD2);
                     break;
 
-                case 3:     //Entregando carta para o player 2
-                    for (int i = 0; i < startingCards; i++)                              // colocando o numero de cartas iniciais
+                //Entregando carta para o player 4
+                case 3:
+
+                    // entregando o numero de cartas iniciais, que foi definido antes
+                    for (int i = 0; i < startingCards; i++)
                     {
-                        Card randCard = deck[Random.Range(0, deck.Count)];              // salvando uma carta aleatoria que esta no baralho
+                        // salvando uma carta aleatoria que esta no baralho
+                        Card randCard = deck[Random.Range(0, deck.Count)];
 
+                        // Definindo a camada do player - mostrando a carta - e salvando em qual slot da mão ela ficara
                         randCard.gameObject.layer = layerPl4;
-                        randCard.gameObject.SetActive(true);                        // vou mostrar a carta
-                        randCard.handIndex = i;                                     // e salvar em qual slot ela esta
+                        randCard.gameObject.SetActive(true);
+                        randCard.handIndex = i;
 
-                        //Colocando a carta na posição e rotação certa
+                        //Colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = cardSlotsPlayer4[i].position;
                         randCard.transform.rotation = cardSlotsPlayer4[i].rotation;
 
-                        randCard.hasBeenPlayed = false;                             // avisando que a nao esta mais no baralho
+                        // avisando que a nao esta mais no baralho
+                        randCard.hasBeenPlayed = false;
 
-                        slotsDisponiveisCartasPlayer4[i] = false;                              // avisando que o slot esta ocupado
-                        deck.Remove(randCard);                                      // removendo a carta do deck
+                        // avisando que o slot esta ocupado e removendo a carta do deck
+                        slotsDisponiveisCartasPlayer4[i] = false;
+                        deck.Remove(randCard);
                     }
 
                     // parte para colocar a carta de dysfuncao no jogo
                     CardDysfunc randCardD3 = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-                    randCardD3.gameObject.SetActive(true);                           // ligando ela
+                    // mostrando ela
+                    randCardD3.gameObject.SetActive(true);
 
-                    //Colocando a carta na posição e rotação certa
+                    //Colocando a carta na posição e rotação certa do slot
                     randCardD3.transform.position = dysfunSlots[z].position;
                     randCardD3.transform.rotation = dysfunSlots[z].rotation;
 
-                    dysfunctions.Remove(randCardD3);                                 // removendo ela do baralho
+                    // removendo ela do baralho
+                    dysfunctions.Remove(randCardD3);
                     break;
             }
         
         }
+        
+        
+
     }
 
     public void DrawCard()                                                  // classe para quando for clicado o botao de compra de carta do baralho
@@ -575,31 +621,56 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void MoveToDiscardPile(Card card)                                // classe criada para quando tiver que mover uma carta para pilha de discarte
+    /// <summary>
+    /// função criada para quando uma carta for jogada para a pilha de discarte
+    /// </summary>
+    /// <param name="card"></param>
+    public void MoveToDiscardPile(Card card)
     {
-        discardPile.Add(card);                                              // adicionando a carta na pilha de discarte
+        // adicionando a carta na pilha de discarte
+        discardPile.Add(card);
 
-                                                                            // para trocar a imagem do botao para a da carta
+        // para trocar a imagem do botao para a da carta que foi descartada
         buttonD.GetComponent<Image>().sprite = card.GetComponent<SpriteRenderer>().sprite;
 
-        compraCarta = true;         //liberando o jogador para comprar carta
-        discartaCarta = false;      //impedindo o jogador de discartar mais cartas
+        // liberando o jogador para comprar carta - impedindo o jogador de discartar mais cartas
+        compraCarta = true;
+        discartaCarta = false;
+
+        // passando para o proximo jogador jogar
         rodadaDoJogador++;
         
+        // verificando se foi o ultimo jogador que jogou
         if(rodadaDoJogador == numPlayerNoJogo)
         {
+            // recomeçando a rodada
             rodadaDoJogador = 0;
+
+            // e aumentando uma rodada no contador de turnos
+            rodada++;
+            contador.text = "Turno: " + rodada;
+
+
         }
 
     }
 
-    public void Shuffle()                                                   // classe para embaralhar
+    /// <summary>
+    /// função para embaralhar as cartas que estão no baralho de descarte
+    /// </summary>
+    public void Shuffle()
     {
-        if(discardPile.Count >=1){                                          // verificando se tem cartas no descarte
-            foreach(Card card in discardPile){                              // executando um looping pelo numero de cartas que tem no descarte
-                deck.Add(card);                                             // adicionamdo a carta no baralho
+        // verificando se tem cartas no descarte
+        if (discardPile.Count >=1){
+
+            // executando um looping pelo numero de cartas que tem no descarte
+            foreach (Card card in discardPile){
+
+                // adicionamdo a carta no baralho
+                deck.Add(card);
             }
-            discardPile.Clear();                                            // esvaziando a Array
+            // esvaziando a Array
+            discardPile.Clear();
         }
     }
 

@@ -62,7 +62,7 @@ public class Card : MonoBehaviour
             case 2:
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl3)
                 { // verificando se nao foi jogada a carta
-                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
+                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima
                     hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
 
                     gm.slotsDisponiveisCartasPlayer3[handIndex] = true;    // avisando que aquele slot de carta esta vazio
