@@ -4,107 +4,146 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
+    // variavel para evitar do jogador clicar varias vezes na mesma carta
+    public bool hasBeenPlayed;
 
-    public bool hasBeenPlayed;                          // variavel para evitar do jogador clicar varias vezes na mesma carta
+    // variavel para guardar em qual slot esta a carta
+    public int handIndex;
 
-    public int handIndex;                               // variavel para guardar em qual slot esta a carta
+    // variavel para salvar a carta de amostra
+    public GameObject cartaExpandida;
 
-    public GameObject cartaExpandida;                   // variavel para salvar a carta de amostra
+    // criando uma variavel do tipo GameManager com nome de gm
+    private GameManager gm;
 
-    private GameManager gm;                             // criando uma variavel do tipo GameManager com nome de gm
-    
-    private void Start()                                // classe executada quando comeca o jogo, 1 vez e primeira que as outras
+    /// <summary>
+    /// classe executada quando comeca o jogo, 1 vez e primeira que as outras
+    /// </summary>
+    private void Start()
     {
-        gm = FindObjectOfType<GameManager>();           // procurando o objeto GameManager e colocamdo ele na variavel
+        // procurando o objeto GameManager e colocamdo ele na variavel
+        gm = FindObjectOfType<GameManager>();
     }
 
+    /// <summary>
+    /// função que e chamada a cada frame do jogo
+    /// </summary>
     private void Update()
-    {                   
-        // CORRIGIR ERRO DO HAND INDEX
-        // para colocar a order il layer das cartas de acordo com o local delas
+    {
+        // definindo o ordem layer da carta igual a posição que ela esta na mão
         gameObject.GetComponent<SpriteRenderer>().sortingOrder = handIndex;
     }
 
-    private void OnMouseDown()                          // quando clicar com o mouse vai executar essa classe
+    /// <summary>
+    /// quando clicar com o mouse vai executar essa classe
+    /// </summary>
+    private void OnMouseDown()
     {
+        // verificando qual jogador e da vez
         switch (gm.rodadaDoJogador)
         {
+            // jogador 1
             case 0:
+                // verificando se nao foi jogada a carta se pode discartar e se é a camada do player certa
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl1)
-                { // verificando se nao foi jogada a carta
-                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
-                    hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
+                {
+                    // levando a carta um pouco para cima - avisando que ja foi jogada a carta
+                    transform.position += Vector3.up * 1;       
+                    hasBeenPlayed = true;
 
-                    gm.slotsDisponiveisCartasPlayer1[handIndex] = true;    // avisando que aquele slot de carta esta vazio
-                    gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+                    // avisando que aquele slot de carta esta vazio
+                    gm.slotsDisponiveisCartasPlayer1[handIndex] = true;
 
-                    // desativando a carta de amostra
+                    // chamando a funcao que esta no GameManager e passando essa carta junto
+                    gm.MoveToDiscardPile(this);
+
+                    // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
-                    gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+                    gameObject.SetActive(false);
                 }
                 break;
 
+            // jogador 2
             case 1:
+                // verificando se nao foi jogada a carta se pode discartar e se é a camada do player certa
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl2)
-                { // verificando se nao foi jogada a carta
-                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
-                    hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
+                {
+                    // levando a carta um pouco para cima - avisando que ja foi jogada a carta
+                    transform.position += Vector3.up * 1;
+                    hasBeenPlayed = true;
 
-                    gm.slotsDisponiveisCartasPlayer2[handIndex] = true;    // avisando que aquele slot de carta esta vazio
-                    gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+                    // avisando que aquele slot de carta esta vazio
+                    gm.slotsDisponiveisCartasPlayer2[handIndex] = true;
 
-                    // desativando a carta de amostra
+                    // chamando a funcao que esta no GameManager e passando essa carta junto
+                    gm.MoveToDiscardPile(this);
+
+                    // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
-                    gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+                    gameObject.SetActive(false);
                 }
                 break;
 
+            // jogador 3
             case 2:
+                // verificando se nao foi jogada a carta se pode discartar e se é a camada do player certa
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl3)
-                { // verificando se nao foi jogada a carta
-                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima
-                    hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
+                {
+                    // levando a carta um pouco para cima - avisando que ja foi jogada a carta
+                    transform.position += Vector3.up * 1;
+                    hasBeenPlayed = true;
 
-                    gm.slotsDisponiveisCartasPlayer3[handIndex] = true;    // avisando que aquele slot de carta esta vazio
-                    gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+                    // avisando que aquele slot de carta esta vazio
+                    gm.slotsDisponiveisCartasPlayer3[handIndex] = true;
 
-                    // desativando a carta de amostra
+                    // chamando a funcao que esta no GameManager e passando essa carta junto
+                    gm.MoveToDiscardPile(this);
+
+                    // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
-                    gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+                    gameObject.SetActive(false);
                 }
                 break;
 
+            // jogador 4
             case 3:
+                // verificando se nao foi jogada a carta se pode discartar e se é a camada do player certa
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl4)
-                { // verificando se nao foi jogada a carta
-                    transform.position += Vector3.up * 1;       // levando a carta um pouco para cima 
-                    hasBeenPlayed = true;                       // avisando que ja foi jogada a carta (para evitar varios cliques seguidos levando a carta para cima)
+                {
+                    // levando a carta um pouco para cima - avisando que ja foi jogada a carta
+                    transform.position += Vector3.up * 1;
+                    hasBeenPlayed = true;
 
-                    gm.slotsDisponiveisCartasPlayer4[handIndex] = true;    // avisando que aquele slot de carta esta vazio
-                    gm.MoveToDiscardPile(this);                 // chamando a funcao que esta no GameManager e passando essa carta junto
+                    // avisando que aquele slot de carta esta vazio
+                    gm.slotsDisponiveisCartasPlayer4[handIndex] = true;
 
-                    // desativando a carta de amostra
+                    // chamando a funcao que esta no GameManager e passando essa carta junto
+                    gm.MoveToDiscardPile(this);
+
+                    // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
-                    gameObject.SetActive(false);                // desativando a carta depois que ela for para a pilha de discarte
+                    gameObject.SetActive(false);
                 }
                 break;
         }
 
     }
 
-    private void OnMouseEnter()                         // classe para detectar a entrada do mouse 1 vez
+    /// <summary>
+    /// quando o cursor do mouse entrar dentro do collaider desse script
+    /// </summary>
+    private void OnMouseEnter()
     {
-                                                        // alterando o sprite vazio para o da carta que o mouse esta em cima
+        // alterando a imagem da carta expandida para a da carta
         cartaExpandida.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
     }
 
-    // tirar a maioria das imagens e deixar so uma grande carta de amostra para servir como exemplo e so passar o sprite da carta que o mouse esta em cima
-
-    // fazer parecido com o yougi oh dual links cartas mais juntas e expandi quando segurar o clica esquerdo e arrastar para descartar a carta
-    // usar box colaider
-    private void OnMouseExit()                          // classe para detectar a saida do mouse 1 vez
+    /// <summary>
+    /// quando o cursor do mouse sair de dentro do collaider desse script
+    /// </summary>
+    private void OnMouseExit()
     {
-                                                        // desativando a carta de amostra
+        // alterando a imagem da carta expandida para vazia
         cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
     }
 
