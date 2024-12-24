@@ -807,10 +807,13 @@ public class GameManager : MonoBehaviour
         // para trocar a imagem do botao para a da carta que foi descartada
         buttonD.GetComponent<Image>().sprite = card.GetComponent<SpriteRenderer>().sprite;
 
+        // CRIAR A PARTE DA ROLAGEM DE DADO E TABELA
+        FindObjectOfType<EventTable>().Evento();
+        
         // liberando o jogador para comprar carta - impedindo o jogador de discartar mais cartas - escondendo a carta da dysfunção
         compraCarta = true;
         discartaCarta = false;
-        resetDysfuncao = true; 
+        resetDysfuncao = true;
 
         // passando para o proximo jogador jogar
         rodadaDoJogador++;
