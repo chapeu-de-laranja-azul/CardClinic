@@ -28,17 +28,21 @@ public class GameManager : MonoBehaviour
     public bool compraCarta = true;
     public bool discartaCarta = false;
 
+    // verificador para resetar a carta de dysfunção ao jogador passar o turno
+    public bool resetDysfuncao = false;
+
     // quantas cartas vai ser entregue inicialmente - quantos jogadores tem no jogo - controle de qual jogador vai jogar
     public int startingCards;
     public int numPlayerNoJogo;
     public int rodadaDoJogador = 0;
 
-    // qual camada e a dos players - e uma variavel para guardar o numero de rodadas jogadas
+    // qual camada e a dos players - e uma variavel para guardar o numero de rodadas jogadas e a rodada final
     public int layerPl1 = 7;
     public int layerPl2 = 8;
     public int layerPl3 = 9;
     public int layerPl4 = 10;
     public int rodada = 0;
+    public int rodadaFinal;
 
     // salvando a ultima carta descartada - salvando a penultima carta descartada
     private Card lastCard;
@@ -95,7 +99,8 @@ public class GameManager : MonoBehaviour
                     // parte para colocar a carta de dysfuncao no jogo
                     CardDysfunc randCardD = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-                    // mostrando ela
+                    // Definindo a camada do player - mostrando ela
+                    randCardD.gameObject.layer = layerPl1;
                     randCardD.gameObject.SetActive(true);
 
                     //Colocando a carta na posição e rotação certa do slot
@@ -136,7 +141,8 @@ public class GameManager : MonoBehaviour
                     // parte para colocar a carta de dysfuncao no jogo
                     CardDysfunc randCardD1 = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-                    // mostrando ela
+                    // Definindo a camada do player - mostrando ela
+                    randCardD1.gameObject.layer = layerPl2;
                     randCardD1.gameObject.SetActive(true);
 
                     //Colocando a carta na posição e rotação certa do slot
@@ -176,7 +182,8 @@ public class GameManager : MonoBehaviour
                     // parte para colocar a carta de dysfuncao no jogo
                     CardDysfunc randCardD2 = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-                    // mostrando ela
+                    // Definindo a camada do player - mostrando ela
+                    randCardD2.gameObject.layer = layerPl3;
                     randCardD2.gameObject.SetActive(true);
 
                     //Colocando a carta na posição e rotação certa do slot
@@ -216,7 +223,8 @@ public class GameManager : MonoBehaviour
                     // parte para colocar a carta de dysfuncao no jogo
                     CardDysfunc randCardD3 = dysfunctions[Random.Range(0, dysfunctions.Count)];
 
-                    // mostrando ela
+                    // Definindo a camada do player - mostrando ela
+                    randCardD3.gameObject.layer = layerPl4;
                     randCardD3.gameObject.SetActive(true);
 
                     //Colocando a carta na posição e rotação certa do slot
@@ -766,26 +774,49 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// função para embaralhar as cartas que estão no baralho de descarte
+    /// </summary>
+    public void Shuffle()
+    {
+        // verificando se tem cartas no descarte
+        if (discardPile.Count >= 1)
+        {
+
+            // executando um looping pelo numero de cartas que tem no descarte
+            foreach (Card card in discardPile)
+            {
+
+                // adicionamdo a carta no baralho
+                deck.Add(card);
+            }
+            // esvaziando a Array
+            discardPile.Clear();
+        }
+    }
+
+    /// <summary>
     /// função criada para quando uma carta for jogada para a pilha de discarte
     /// </summary>
     /// <param name="card"></param>
     public void MoveToDiscardPile(Card card)
     {
+
         // adicionando a carta na pilha de discarte
         discardPile.Add(card);
 
         // para trocar a imagem do botao para a da carta que foi descartada
         buttonD.GetComponent<Image>().sprite = card.GetComponent<SpriteRenderer>().sprite;
 
-        // liberando o jogador para comprar carta - impedindo o jogador de discartar mais cartas
+        // liberando o jogador para comprar carta - impedindo o jogador de discartar mais cartas - escondendo a carta da dysfunção
         compraCarta = true;
         discartaCarta = false;
+        resetDysfuncao = true; 
 
         // passando para o proximo jogador jogar
         rodadaDoJogador++;
-        
+
         // verificando se foi o ultimo jogador que jogou
-        if(rodadaDoJogador == numPlayerNoJogo)
+        if (rodadaDoJogador == numPlayerNoJogo)
         {
             // recomeçando a rodada
             rodadaDoJogador = 0;
@@ -794,28 +825,29 @@ public class GameManager : MonoBehaviour
             rodada++;
             contador.text = "Turno: " + rodada;
 
+            // verificando se chegou na ultima rodada
+            if (rodada == rodadaFinal)
+            {
+                //MODOS DE "PAUSAR O JOGO"
+                //rodadaDoJogador = 10;
+                compraCarta = false;
+
+                // chamando o parte dois do jogo (montar o tratamento)
+                SetUpTreatment();
+            }
 
         }
+        
 
     }
 
     /// <summary>
-    /// função para embaralhar as cartas que estão no baralho de descarte
+    /// Aqui vai ser desemvolvida a parte onde os jogadores teram um tempo para montar o tratamento deles para apresentar
+    /// para o mestre
     /// </summary>
-    public void Shuffle()
+    public void SetUpTreatment()
     {
-        // verificando se tem cartas no descarte
-        if (discardPile.Count >=1){
-
-            // executando um looping pelo numero de cartas que tem no descarte
-            foreach (Card card in discardPile){
-
-                // adicionamdo a carta no baralho
-                deck.Add(card);
-            }
-            // esvaziando a Array
-            discardPile.Clear();
-        }
+        Debug.Log("COMEÇA A PARTE DOIS DO JOGO (MONTAR O TRATAMENTO COM AS CARTAS QUE TEM)");
     }
 
 }
