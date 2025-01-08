@@ -23,6 +23,7 @@ public class Card : MonoBehaviour
     {
         // procurando o objeto GameManager e colocamdo ele na variavel
         gm = FindObjectOfType<GameManager>();
+        
     }
 
     /// <summary>
@@ -32,8 +33,9 @@ public class Card : MonoBehaviour
     {
         // definindo o ordem layer da carta igual a posição que ela esta na mão
         gameObject.GetComponent<SpriteRenderer>().sortingOrder = handIndex;
-    }
 
+    }
+    
     /// <summary>
     /// quando clicar com o mouse vai executar essa classe
     /// </summary>
@@ -54,12 +56,13 @@ public class Card : MonoBehaviour
                     // avisando que aquele slot de carta esta vazio
                     gm.slotsDisponiveisCartasPlayer1[handIndex] = true;
 
-                    // chamando a funcao que esta no GameManager e passando essa carta junto
-                    gm.MoveToDiscardPile(this);
-
                     // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
                     gameObject.SetActive(false);
+
+                    // chamando a funcao que esta no GameManager e passando essa carta junto
+                    gm.deckPlayer1.Remove(this);
+                    gm.MoveToDiscardPile(this);
                 }
                 break;
 
@@ -75,12 +78,13 @@ public class Card : MonoBehaviour
                     // avisando que aquele slot de carta esta vazio
                     gm.slotsDisponiveisCartasPlayer2[handIndex] = true;
 
-                    // chamando a funcao que esta no GameManager e passando essa carta junto
-                    gm.MoveToDiscardPile(this);
-
                     // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
                     gameObject.SetActive(false);
+
+                    // chamando a funcao que esta no GameManager e passando essa carta junto
+                    gm.MoveToDiscardPile(this);
+                    gm.deckPlayer2.Remove(this);
                 }
                 break;
 
@@ -96,12 +100,13 @@ public class Card : MonoBehaviour
                     // avisando que aquele slot de carta esta vazio
                     gm.slotsDisponiveisCartasPlayer3[handIndex] = true;
 
-                    // chamando a funcao que esta no GameManager e passando essa carta junto
-                    gm.MoveToDiscardPile(this);
-
                     // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
                     gameObject.SetActive(false);
+
+                    // chamando a funcao que esta no GameManager e passando essa carta junto
+                    gm.MoveToDiscardPile(this);
+                    gm.deckPlayer3.Remove(this);
                 }
                 break;
 
@@ -117,12 +122,13 @@ public class Card : MonoBehaviour
                     // avisando que aquele slot de carta esta vazio
                     gm.slotsDisponiveisCartasPlayer4[handIndex] = true;
 
-                    // chamando a funcao que esta no GameManager e passando essa carta junto
-                    gm.MoveToDiscardPile(this);
-
                     // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
                     gameObject.SetActive(false);
+
+                    // chamando a funcao que esta no GameManager e passando essa carta junto
+                    gm.MoveToDiscardPile(this);
+                    gm.deckPlayer4.Remove(this);
                 }
                 break;
         }
