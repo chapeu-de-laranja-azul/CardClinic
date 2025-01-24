@@ -12,13 +12,20 @@ public class DiscartButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     // Uma variavel para salvar a carta de amostra
     public GameObject cartaExpandida;
 
+    private GameManager gm;
+
+    private void Start()
+    {
+        gm = FindObjectOfType<GameManager>();
+    }
+
     /// <summary>
     ///  quando o cursor do mouse entrar dentro da area desse script
     /// </summary>
     /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        cartaExpandida.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<Image>().sprite;
+        cartaExpandida.GetComponent<Image>().sprite = gameObject.GetComponent<Image>().sprite;
     }
 
     /// <summary>
@@ -27,7 +34,7 @@ public class DiscartButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// <param name="eventData"></param>
     public void OnPointerExit(PointerEventData eventData)
     {
-        cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+        cartaExpandida.GetComponent<Image>().sprite = gm.imageSemcard;
     }
 
     /// <summary>
@@ -36,7 +43,7 @@ public class DiscartButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// <param name="eventData"></param>
     public void OnPointerClick(PointerEventData eventData)
     {
-        cartaExpandida.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<Image>().sprite;
+        cartaExpandida.GetComponent<Image>().sprite = gameObject.GetComponent<Image>().sprite;
     }
 
 }

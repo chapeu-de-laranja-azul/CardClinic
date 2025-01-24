@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     public int rodada = 0;
     public int rodadaFinal;
     public int[] creditos = new int[4];
+    [SerializeField] private int creditosFimSemana;
 
     // salvando a ultima carta descartada - salvando a penultima carta descartada
     private Card lastCard;
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
 
     // salvando o painel para mostrar o evento aleatorio - salvando vectors 3 e 2 e quaternion para mover os nomes
     [SerializeField] private GameObject painelNum;
+    [SerializeField] private GameObject painelLoja;
 
     [SerializeField] private Vector3[] nicknamesVector3T;
     [SerializeField] private Vector2[] nicknamesVector2P;
@@ -86,7 +88,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void Start()
     {
-        // Alterando os nomes dos players (Depois fazer a alteração com o escripiti da conecção)
+        // Alterando os nomes dos players (Depois fazer a alteração com o escript da conecção)
         playersNicknames[0].text = "Jogador 1";
         playersNicknames[1].text = "Jogador 2";
         playersNicknames[2].text = "Jogador 3";
@@ -332,6 +334,20 @@ public class GameManager : MonoBehaviour
                     break;
                 case 3:
 
+                    textoEvento.text = "Você perdeu 4 creditos";
+                    textoEvento.color = Color.red;
+                    numeroDado.color = Color.red;
+
+                    creditos[rodadaDoJogador] = creditos[rodadaDoJogador] - 4;
+
+                    if (creditos[rodadaDoJogador] < 0)
+                    {
+                        creditos[rodadaDoJogador] = 0;
+                    }
+
+                    break;
+                case 4:
+
                     textoEvento.text = "Você perdeu 3 creditos";
                     textoEvento.color = Color.red;
                     numeroDado.color = Color.red;
@@ -344,7 +360,7 @@ public class GameManager : MonoBehaviour
                     }
 
                     break;
-                case 4:
+                case 5 or 6:
 
                     textoEvento.text = "Você perdeu 2 creditos";
                     textoEvento.color = Color.red;
@@ -358,21 +374,7 @@ public class GameManager : MonoBehaviour
                     }
 
                     break;
-                case 5 or 6:
-
-                    textoEvento.text = "Você perdeu 1 creditos";
-                    textoEvento.color = Color.red;
-                    numeroDado.color = Color.red;
-
-                    creditos[rodadaDoJogador] = creditos[rodadaDoJogador] - 1;
-
-                    if (creditos[rodadaDoJogador] < 0)
-                    {
-                        creditos[rodadaDoJogador] = 0;
-                    }
-
-                    break;
-                case 7 or 8 or 9:
+                case 7 or 8 or 9 or 10:
 
 
                     textoEvento.text = "Você não ganhou creditos";
@@ -380,7 +382,7 @@ public class GameManager : MonoBehaviour
                     numeroDado.color = Color.gray;
 
                     break;
-                case 10 or 11 or 12:
+                case 11 or 12 or 13 or 14:
 
                     textoEvento.text = "Você ganhou 1 creditos";
                     textoEvento.color = Color.green;
@@ -389,7 +391,7 @@ public class GameManager : MonoBehaviour
                     creditos[rodadaDoJogador] = creditos[rodadaDoJogador] + 1;
 
                     break;
-                case 13 or 14 or 15:
+                case 15 or 16:
 
                     textoEvento.text = "Você ganhou 3 creditos";
                     textoEvento.color = Color.green;
@@ -398,7 +400,7 @@ public class GameManager : MonoBehaviour
                     creditos[rodadaDoJogador] = creditos[rodadaDoJogador] + 3;
 
                     break;
-                case 16 or 17:
+                case 17 or 18:
 
                     textoEvento.text = "Você ganhou 4 creditos";
                     textoEvento.color = Color.green;
@@ -407,7 +409,7 @@ public class GameManager : MonoBehaviour
                     creditos[rodadaDoJogador] = creditos[rodadaDoJogador] + 4;
 
                     break;
-                case 18 or 19:
+                case 19:
 
                     textoEvento.text = "Você ganhou 5 creditos";
                     textoEvento.color = Color.green;
@@ -436,6 +438,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void OpenStore()
+    {
+        painelLoja.SetActive(true);
+    }
+
+    public void CloseStore()
+    {
+        painelLoja.SetActive(false);
+    }
     public void ClosePainelNum()
     {
         // desativando painel de numero do dado
@@ -676,7 +687,7 @@ public class GameManager : MonoBehaviour
                                     if (penultima != null)
                                     {
                                         // substituindo a imagem para a carta anterior
-                                        buttonD.GetComponent<Image>().sprite = penultima.GetComponent<SpriteRenderer>().sprite;
+                                        buttonD.GetComponent<Image>().sprite = penultima.GetComponent<Image>().sprite;
 
                                         // parando o looping
                                         return;
@@ -726,7 +737,7 @@ public class GameManager : MonoBehaviour
                                     if (penultima != null)
                                     {
                                         // substituindo a imagem para a carta anterior
-                                        buttonD.GetComponent<Image>().sprite = penultima.GetComponent<SpriteRenderer>().sprite;
+                                        buttonD.GetComponent<Image>().sprite = penultima.GetComponent<Image>().sprite;
 
                                         // parando o looping
                                         return;
@@ -776,7 +787,7 @@ public class GameManager : MonoBehaviour
                                     if (penultima != null)
                                     {
                                         // substituindo a imagem para a carta anterior
-                                        buttonD.GetComponent<Image>().sprite = penultima.GetComponent<SpriteRenderer>().sprite;
+                                        buttonD.GetComponent<Image>().sprite = penultima.GetComponent<Image>().sprite;
 
                                         // parando o looping
                                         return;
@@ -826,7 +837,7 @@ public class GameManager : MonoBehaviour
                                     if (penultima != null)
                                     {
                                         // substituindo a imagem para a carta anterior
-                                        buttonD.GetComponent<Image>().sprite = penultima.GetComponent<SpriteRenderer>().sprite;
+                                        buttonD.GetComponent<Image>().sprite = penultima.GetComponent<Image>().sprite;
 
                                         // parando o looping
                                         return;
@@ -860,7 +871,7 @@ public class GameManager : MonoBehaviour
         
 
         // para trocar a imagem do botao para a da carta que foi descartada
-        buttonD.GetComponent<Image>().sprite = card.GetComponent<SpriteRenderer>().sprite;
+        buttonD.GetComponent<Image>().sprite = card.GetComponent<Image>().sprite;
 
         // impedindo o jogador de discartar mais cartas - escondendo a carta da dysfunção - Permitindo rolar o dado da tabela
         discartaCarta = false;
@@ -1096,7 +1107,7 @@ public class GameManager : MonoBehaviour
             // Adicionando para os jogadores os creditos semanais
             for(int i = 0; i < creditos.Length; i++)
             {
-                creditos[i] = creditos[i] + 5;
+                creditos[i] = creditos[i] + creditosFimSemana;
                 textCreditos[i].text = "X" + Convert.ToString(creditos[i]);
             }
             // e aumentando uma rodada no contador de turnos

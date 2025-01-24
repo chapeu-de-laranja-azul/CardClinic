@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour
+public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     // variavel para evitar do jogador clicar varias vezes na mesma carta
     public bool hasBeenPlayed;
@@ -25,21 +27,11 @@ public class Card : MonoBehaviour
         gm = FindObjectOfType<GameManager>();
         
     }
-
-    /// <summary>
-    /// função que e chamada a cada frame do jogo
-    /// </summary>
-    private void Update()
-    {
-        // definindo o ordem layer da carta igual a posição que ela esta na mão
-        gameObject.GetComponent<SpriteRenderer>().sortingOrder = handIndex;
-
-    }
     
     /// <summary>
     /// quando clicar com o mouse vai executar essa classe
     /// </summary>
-    private void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
         // verificando qual jogador e da vez
         switch (gm.rodadaDoJogador)
@@ -57,7 +49,7 @@ public class Card : MonoBehaviour
                     gm.slotsDisponiveisCartasPlayer1[handIndex] = true;
 
                     // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
-                    cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+                    cartaExpandida.GetComponent<Image>().sprite = null;
                     gameObject.SetActive(false);
 
                     // chamando a funcao que esta no GameManager e passando essa carta junto
@@ -79,7 +71,7 @@ public class Card : MonoBehaviour
                     gm.slotsDisponiveisCartasPlayer2[handIndex] = true;
 
                     // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
-                    cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+                    cartaExpandida.GetComponent<Image>().sprite = null;
                     gameObject.SetActive(false);
 
                     // chamando a funcao que esta no GameManager e passando essa carta junto
@@ -101,7 +93,7 @@ public class Card : MonoBehaviour
                     gm.slotsDisponiveisCartasPlayer3[handIndex] = true;
 
                     // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
-                    cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+                    cartaExpandida.GetComponent<Image>().sprite = null;
                     gameObject.SetActive(false);
 
                     // chamando a funcao que esta no GameManager e passando essa carta junto
@@ -123,7 +115,7 @@ public class Card : MonoBehaviour
                     gm.slotsDisponiveisCartasPlayer4[handIndex] = true;
 
                     // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
-                    cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+                    cartaExpandida.GetComponent<Image>().sprite = null;
                     gameObject.SetActive(false);
 
                     // chamando a funcao que esta no GameManager e passando essa carta junto
@@ -138,19 +130,19 @@ public class Card : MonoBehaviour
     /// <summary>
     /// quando o cursor do mouse entrar dentro do collaider desse script
     /// </summary>
-    private void OnMouseEnter()
+    public void OnPointerEnter(PointerEventData eventData)
     {
         // alterando a imagem da carta expandida para a da carta
-        cartaExpandida.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
+        cartaExpandida.GetComponent<Image>().sprite = gameObject.GetComponent<Image>().sprite;
     }
 
     /// <summary>
     /// quando o cursor do mouse sair de dentro do collaider desse script
     /// </summary>
-    private void OnMouseExit()
+    public void OnPointerExit(PointerEventData eventData)
     {
         // alterando a imagem da carta expandida para vazia
-        cartaExpandida.GetComponent<SpriteRenderer>().sprite = null;
+        cartaExpandida.GetComponent<Image>().sprite = gm.imageSemcard;
     }
 
 }
