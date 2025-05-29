@@ -6,10 +6,13 @@ using TMPro;
 using System;
 
 using Random = UnityEngine.Random;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
     #region Variaveis utilizadas no GameManager
+
+    [Header("Listas para baralho, discarte, disfunções e players")]
     // criando listas para o baralho - discarte - disfunções - players 
     public List<CardDysfunc> dysfunctions = new List<CardDysfunc>();
     public List<CardDysfunc> cardsDysfunctions = new List<CardDysfunc>();
@@ -20,6 +23,7 @@ public class GameManager : MonoBehaviour
     public List<Card> deckPlayer3 = new List<Card>();
     public List<Card> deckPlayer4 = new List<Card>();
 
+    [Header("Variaveis para posições dos elementos do jogo")]
     // as arrays para salvar as posições de todas as cartas que estarão no jogo - e do RectTransform dos nomes dos players
     public Transform[] dysfunSlots;
     public Transform[] cardSlotsPlayer1;
@@ -27,25 +31,34 @@ public class GameManager : MonoBehaviour
     public Transform[] cardSlotsPlayer3;
     public Transform[] cardSlotsPlayer4;
     [SerializeField] private RectTransform[] nicknamesTransform;
+    [SerializeField] private Transform slotCartaExtra;
 
+    [Header("Verificando se os slots de cartas estão vazios")]
     // para verificar se os slots estao vazios ou nao
     public bool[] slotsDisponiveisCartasPlayer1;
     public bool[] slotsDisponiveisCartasPlayer2;
     public bool[] slotsDisponiveisCartasPlayer3;
     public bool[] slotsDisponiveisCartasPlayer4;
-    // verificadores para o controle de quando os jogadores podem discartar ou comprar cartas - verificador para resetar a carta de dysfunção ao jogador passar o turno
-    public bool compraCarta = false;
+
+    [Header("Verificadores para a execução dos eventos do jogo")]
+    // verificadores para o controle de quando os jogadores podem discartar, comprar e abrir a loja - verificador para resetar a carta de dysfunção ao jogador passar o turno
+    [SerializeField] private bool rolarDado = true;
+    [SerializeField] private bool compraCarta = false;
+    [SerializeField] private bool lojaAberta = false; // Não esta sendo usada
+    [SerializeField] private bool eventoDaLoja;
     public bool discartaCarta = false;
     public bool resetDysfuncao = false;
-    public bool rolarDado = true;
 
+    // verificador para se todos os slots estiverem ocupados
+    [SerializeField] private bool todosSlotsOcupados = true;
+    [SerializeField] private bool passarTurno = false;
+
+    [Header("As variaveis que definem os valores fixos no jogo")]
     // quantas cartas vai ser entregue inicialmente - quantos jogadores tem no jogo - controle de qual jogador vai jogar - e o numero que foi rolado no dado
+    // qual camada e a dos players - e uma variavel para guardar o numero de rodadas jogadas e a rodada final
     public int startingCards;
     public int numPlayerNoJogo;
     public int rodadaDoJogador = 0;
-    [SerializeField] private int numAleatorio;
-
-    // qual camada e a dos players - e uma variavel para guardar o numero de rodadas jogadas e a rodada final
     public int layerPl1 = 7;
     public int layerPl2 = 8;
     public int layerPl3 = 9;
@@ -53,15 +66,22 @@ public class GameManager : MonoBehaviour
     public int rodada = 0;
     public int rodadaFinal;
     public int[] creditos = new int[4];
+    [SerializeField] private int numAleatorio;
     [SerializeField] private int creditosFimSemana;
+    [SerializeField] private int eventoBasico;
+    [SerializeField] private int eventoBom;
+    [SerializeField] private int eventoOtimo;
 
+    [Header("Salvando cartas")]
     // salvando a ultima carta descartada - salvando a penultima carta descartada
     private Card lastCard;
     private Card penultima;
 
+    [Header("Salvando botões")]
     // para armazenar o botao de descarte
     public Button buttonD;
 
+    [Header("Salvando elementos de texto")]
     // salvando o texto do contador, nicks, creditos, numero do dado, texto do evento
     public TextMeshProUGUI contador;
     [SerializeField] private TextMeshProUGUI[] playersNicknames;
@@ -69,17 +89,24 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI numeroDado;
     [SerializeField] private TextMeshProUGUI textoEvento;
 
+    [Header("Salvando imagens")]
     // salvando uma imagem vazia de carta
-    public Sprite imageSemcard;
+    public Sprite imagemSemcard;
+    public Sprite imagemVazio;
 
-    // salvando o painel para mostrar o evento aleatorio - salvando vectors 3 e 2 e quaternion para mover os nomes
+    [Header("Salvando elementos do jogo")]
+    // salvando os paneis para mostrar e fechar eles
     [SerializeField] private GameObject painelNum;
     [SerializeField] private GameObject painelLoja;
 
+    [Header("Salvando elementos de posição do canvas")]
+    // salvando vectors 3 e 2 e quaternion para mover os nomes
     [SerializeField] private Vector3[] nicknamesVector3T;
     [SerializeField] private Vector2[] nicknamesVector2P;
     [SerializeField] private Quaternion[] nicknamesQuaternion;
-    
+
+    [Header("Animações")]
+    [SerializeField] private Animator[] AnimMoedasPjs; 
     
     #endregion
 
@@ -90,13 +117,18 @@ public class GameManager : MonoBehaviour
     {
         // Alterando os nomes dos players (Depois fazer a alteração com o escript da conecção)
         playersNicknames[0].text = "Jogador 1";
+        playersNicknames[0].color = Color.red;
         playersNicknames[1].text = "Jogador 2";
+        playersNicknames[1].color = Color.white;
         playersNicknames[2].text = "Jogador 3";
+        playersNicknames[2].color = Color.blue;
         playersNicknames[3].text = "Jogador 4";
+        playersNicknames[3].color = Color.cyan;
 
         // Salvando a informação das posição iniciais dos nomes dos players
         for(int i = 0; i < nicknamesTransform.Length; i++)
         {
+            
             nicknamesVector3T[i] = nicknamesTransform[i].position;
             nicknamesQuaternion[i] = nicknamesTransform[i].rotation;
             nicknamesVector2P[i] = nicknamesTransform[i].pivot;
@@ -121,6 +153,9 @@ public class GameManager : MonoBehaviour
                         randCard.gameObject.layer = layerPl1;
                         randCard.gameObject.SetActive(true);
                         randCard.handIndex = i;
+
+                        // definido qual carta fica na frente da outra
+                        randCard.canvas.sortingOrder = i;
 
                         //Colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = cardSlotsPlayer1[i].position;
@@ -166,6 +201,9 @@ public class GameManager : MonoBehaviour
                         randCard.gameObject.SetActive(true);
                         randCard.handIndex = i;
 
+                        // definido qual carta fica na frente da outra
+                        randCard.canvas.sortingOrder = i;
+
                         //Colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = cardSlotsPlayer2[i].position;
                         randCard.transform.rotation = cardSlotsPlayer2[i].rotation;
@@ -209,6 +247,9 @@ public class GameManager : MonoBehaviour
                         randCard.gameObject.SetActive(true);
                         randCard.handIndex = i;
 
+                        // definido qual carta fica na frente da outra
+                        randCard.canvas.sortingOrder = i;
+
                         //Colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = cardSlotsPlayer3[i].position;
                         randCard.transform.rotation = cardSlotsPlayer3[i].rotation;
@@ -251,6 +292,9 @@ public class GameManager : MonoBehaviour
                         randCard.gameObject.layer = layerPl4;
                         randCard.gameObject.SetActive(true);
                         randCard.handIndex = i;
+
+                        // definido qual carta fica na frente da outra
+                        randCard.canvas.sortingOrder = i;
 
                         //Colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = cardSlotsPlayer4[i].position;
@@ -304,14 +348,18 @@ public class GameManager : MonoBehaviour
             // executando o evento que caiu no dado
             switch (numAleatorio)
             {
+                // se cair esse numero no dado triga o evento
                 case 1:
 
+                    // texto do evento e cor das letras
                     textoEvento.text = "Você perdeu 10 creditos";
                     textoEvento.color = Color.red;
                     numeroDado.color = Color.red;
 
+                    // os creditos que são recebidos pelo evento
                     creditos[rodadaDoJogador] = creditos[rodadaDoJogador] - 10;
                     
+                    // impedindo que os jogadores fiquem com numero negativo de creditos
                     if(creditos[rodadaDoJogador] < 0)
                     {
                         creditos[rodadaDoJogador] = 0;
@@ -438,21 +486,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OpenStore()
-    {
-        painelLoja.SetActive(true);
-    }
-
-    public void CloseStore()
-    {
-        painelLoja.SetActive(false);
-    }
-    public void ClosePainelNum()
-    {
-        // desativando painel de numero do dado
-        painelNum.SetActive(false);
-    }
-
     /// <summary>
     /// classe para quando for clicado o botao de compra de carta do baralho
     /// </summary>
@@ -472,6 +505,8 @@ public class GameManager : MonoBehaviour
             {
                 // jogador 1
                 case 0:
+                    // dizendo que 
+                    todosSlotsOcupados = true;
                     // verificando todos os slots de cartas
                     for (int i = 0; i < slotsDisponiveisCartasPlayer1.Length; i++)
                     {
@@ -482,6 +517,9 @@ public class GameManager : MonoBehaviour
                             randCard.gameObject.SetActive(true);
                             randCard.handIndex = i;
                             randCard.gameObject.layer = layerPl1;
+
+                            // definido qual carta fica na frente da outra
+                            randCard.canvas.sortingOrder = i;
 
                             // colocando a carta na posição e rotação certa do slot
                             randCard.transform.position = cardSlotsPlayer1[i].position;
@@ -495,14 +533,38 @@ public class GameManager : MonoBehaviour
                             deck.Remove(randCard);
                             deckPlayer1.Add(randCard);
 
-                            // impedindo do jogador de comprar outras cartas - liberando o jogador para discartar uma carta
+
+                            // impedindo do jogador de comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
                             compraCarta = false;
+                            lojaAberta = true;
                             discartaCarta = true;
+
+                            // dizendo que havia pelomenos um slot vaziu 
+                            todosSlotsOcupados = false;
 
                             //parando o looping
                             return;
                         }
                     }
+
+                    // verificando se todos os slots do deck estão ocupados 
+                    if(todosSlotsOcupados == true)
+                    {
+                        randCard.gameObject.SetActive(true);
+                        randCard.gameObject.layer = layerPl1;
+
+                        randCard.transform.position = slotCartaExtra.position;
+                        randCard.transform.rotation = slotCartaExtra.rotation;
+
+                        randCard.hasBeenPlayed = false;
+
+                        deck.Remove(randCard);
+
+                        compraCarta = false;
+
+                        Debug.Log("Criar a possibilidade de escolher a carta para descartar");
+                    }
+
                     break;
                 // jogador 2
                 case 1:
@@ -517,6 +579,9 @@ public class GameManager : MonoBehaviour
                             randCard.handIndex = i;
                             randCard.gameObject.layer = layerPl2;
 
+                            // definido qual carta fica na frente da outra
+                            randCard.canvas.sortingOrder = i;
+
                             // colocando a carta na posição e rotação certa do slot
                             randCard.transform.position = cardSlotsPlayer1[i].position;
                             randCard.transform.rotation = cardSlotsPlayer1[i].rotation;
@@ -529,8 +594,9 @@ public class GameManager : MonoBehaviour
                             deck.Remove(randCard);
                             deckPlayer2.Add(randCard);
 
-                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta
+                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
                             compraCarta = false;
+                            lojaAberta = true;
                             discartaCarta = true;
 
                             // parando o looping
@@ -551,6 +617,9 @@ public class GameManager : MonoBehaviour
                             randCard.handIndex = i;
                             randCard.gameObject.layer = layerPl3;
 
+                            // definido qual carta fica na frente da outra
+                            randCard.canvas.sortingOrder = i;
+
                             // colocando a carta na posição e rotação certa do slot
                             randCard.transform.position = cardSlotsPlayer1[i].position;
                             randCard.transform.rotation = cardSlotsPlayer1[i].rotation;
@@ -563,8 +632,9 @@ public class GameManager : MonoBehaviour
                             deck.Remove(randCard);
                             deckPlayer3.Add(randCard);
 
-                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta
+                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
                             compraCarta = false;
+                            lojaAberta = true;
                             discartaCarta = true;
 
                             // parando o looping
@@ -585,6 +655,9 @@ public class GameManager : MonoBehaviour
                             randCard.handIndex = i;
                             randCard.gameObject.layer = layerPl4;
 
+                            // definido qual carta fica na frente da outra
+                            randCard.canvas.sortingOrder = i;
+
                             // colocando a carta na posição e rotação certa do slot
                             randCard.transform.position = cardSlotsPlayer1[i].position;
                             randCard.transform.rotation = cardSlotsPlayer1[i].rotation;
@@ -597,8 +670,9 @@ public class GameManager : MonoBehaviour
                             deck.Remove(randCard);
                             deckPlayer4.Add(randCard);
 
-                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta
+                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
                             compraCarta = false;
+                            lojaAberta = true;
                             discartaCarta = true;
 
                             // parando o looping
@@ -667,6 +741,9 @@ public class GameManager : MonoBehaviour
                                     lastCard.handIndex = y;
                                     lastCard.gameObject.layer = layerPl1;
 
+                                    // definido qual carta fica na frente da outra
+                                    lastCard.canvas.sortingOrder = y;
+
                                     // colocando a carta na posição e rotação certa do slot
                                     lastCard.transform.position = cardSlotsPlayer1[y].position;
                                     lastCard.transform.rotation = cardSlotsPlayer1[y].rotation;
@@ -679,8 +756,9 @@ public class GameManager : MonoBehaviour
                                     discardPile.Remove(lastCard);
                                     deckPlayer1.Add(lastCard);
 
-                                    // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta
+                                    // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
                                     compraCarta = false;
+                                    lojaAberta = true;
                                     discartaCarta = true;
 
                                     // verificando se nao contem penultima carta
@@ -695,7 +773,7 @@ public class GameManager : MonoBehaviour
                                     else
                                     {
                                         // colocando a imagem de discarte vazio
-                                        buttonD.GetComponent<Image>().sprite = imageSemcard;
+                                        buttonD.GetComponent<Image>().sprite = imagemVazio;
 
                                         // parando o looping
                                         return;
@@ -717,6 +795,9 @@ public class GameManager : MonoBehaviour
                                     lastCard.handIndex = y;
                                     lastCard.gameObject.layer = layerPl2;
 
+                                    // definido qual carta fica na frente da outra
+                                    lastCard.canvas.sortingOrder = y;
+
                                     // colocando a carta na posição e rotação certa do slot
                                     lastCard.transform.position = cardSlotsPlayer1[y].position;
                                     lastCard.transform.rotation = cardSlotsPlayer1[y].rotation;
@@ -728,9 +809,10 @@ public class GameManager : MonoBehaviour
                                     slotsDisponiveisCartasPlayer2[y] = false;
                                     discardPile.Remove(lastCard);
                                     deckPlayer2.Add(lastCard);
-                                    
-                                    // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta
+
+                                    // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
                                     compraCarta = false;
+                                    lojaAberta = true;
                                     discartaCarta = true;
 
                                     // verificando se nao contem penultima carta
@@ -745,7 +827,7 @@ public class GameManager : MonoBehaviour
                                     else
                                     {
                                         // colocando a imagem de discarte vazio
-                                        buttonD.GetComponent<Image>().sprite = imageSemcard;
+                                        buttonD.GetComponent<Image>().sprite = imagemVazio;
 
                                         // parando o looping
                                         return;
@@ -767,6 +849,9 @@ public class GameManager : MonoBehaviour
                                     lastCard.handIndex = y;
                                     lastCard.gameObject.layer = layerPl3;
 
+                                    // definido qual carta fica na frente da outra
+                                    lastCard.canvas.sortingOrder = y;
+
                                     // colocando a carta na posição e rotação certa do slot
                                     lastCard.transform.position = cardSlotsPlayer1[y].position;
                                     lastCard.transform.rotation = cardSlotsPlayer1[y].rotation;
@@ -778,9 +863,10 @@ public class GameManager : MonoBehaviour
                                     slotsDisponiveisCartasPlayer3[y] = false;
                                     discardPile.Remove(lastCard);
                                     deckPlayer3.Add(lastCard);
-                                    
-                                    // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta
+
+                                    // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
                                     compraCarta = false;
+                                    lojaAberta = true;
                                     discartaCarta = true;
 
                                     // verificando se nao contem penultima carta
@@ -795,7 +881,7 @@ public class GameManager : MonoBehaviour
                                     else
                                     {
                                         // colocando a imagem de discarte vazio
-                                        buttonD.GetComponent<Image>().sprite = imageSemcard;
+                                        buttonD.GetComponent<Image>().sprite = imagemVazio;
 
                                         // parando o looping
                                         return;
@@ -817,6 +903,9 @@ public class GameManager : MonoBehaviour
                                     lastCard.handIndex = y;
                                     lastCard.gameObject.layer = layerPl4;
 
+                                    // definido qual carta fica na frente da outra
+                                    lastCard.canvas.sortingOrder = y;
+
                                     // colocando a carta na posição e rotação certa do slot
                                     lastCard.transform.position = cardSlotsPlayer1[y].position;
                                     lastCard.transform.rotation = cardSlotsPlayer1[y].rotation;
@@ -828,9 +917,10 @@ public class GameManager : MonoBehaviour
                                     slotsDisponiveisCartasPlayer4[y] = false;
                                     discardPile.Remove(lastCard);
                                     deckPlayer4.Add(lastCard);
-                                    
-                                    // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta
+
+                                    // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
                                     compraCarta = false;
+                                    lojaAberta = true;
                                     discartaCarta = true;
 
                                     // verificando se nao contem penultima carta
@@ -845,7 +935,7 @@ public class GameManager : MonoBehaviour
                                     else
                                     {
                                         // colocando a imagem de discarte vazio
-                                        buttonD.GetComponent<Image>().sprite = imageSemcard;
+                                        buttonD.GetComponent<Image>().sprite = imagemSemcard;
 
                                         // parando o looping
                                         return;
@@ -859,275 +949,448 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Função para a execução dos eventos da loja 
+    /// </summary>
+    /// <param name="evento"> qual evento que esta sendo executado</param>
+    public void EventosLoja(int evento)
+    {
+        // verificando se a loja esta aberta
+        if (lojaAberta)
+        {
+            // executando o evento clicado
+            switch (evento)
+            {
+                case 1:
+
+                    // verificando se tem creditos para o evento
+                    if (creditos[rodadaDoJogador] < eventoBasico)
+                    {
+                        // se não tiver pisca o numero de creditos em vermelho
+                        Debug.Log("Sem creditos suficientes");
+                        
+                        AnimMoedasPjs[rodadaDoJogador].SetTrigger("Piscar");
+
+                        break;
+                    }
+
+                    /* Desenvolver a parte de verificação de compra de cartasem excesso
+                    else if ()
+                    {
+                        Debug.Log("Você ja atingiu seu limite de cartas");
+                        break;
+                    }
+                    */
+
+                    // comprando uma carta do baralho
+                    compraCarta = true;
+                    DrawCard();
+
+                    // reduzindo os creditos dos jogadores pela compra do evento
+                    creditos[rodadaDoJogador] = creditos[rodadaDoJogador] - eventoBasico;
+                    textCreditos[rodadaDoJogador].text = "X" + Convert.ToString(creditos[rodadaDoJogador]);
+
+                    Debug.Log("Evento 1 executado");
+
+                    break;
+                case 2:
+
+                    if (creditos[rodadaDoJogador] < eventoBasico)
+                    {
+                        Debug.Log("Voce e pobre");
+                        break;
+                    }
+
+                    Debug.Log("Evento 2");
+                    break;
+                case 3:
+
+                    if (creditos[rodadaDoJogador] < eventoBasico)
+                    {
+                        Debug.Log("Voce e pobre");
+                        break;
+                    }
+
+                    Debug.Log("Evento 3");
+                    break;
+                case 4:
+
+                    if (creditos[rodadaDoJogador] < eventoBom)
+                    {
+                        Debug.Log("Voce e pobre");
+                        break;
+                    }
+
+                    Debug.Log("Evento 4");
+                    break;
+                case 5:
+
+                    if (creditos[rodadaDoJogador] < eventoBom)
+                    {
+                        Debug.Log("Voce e pobre");
+                        break;
+                    }
+
+                    Debug.Log("Evento 5");
+                    break;
+                case 6:
+
+                    if (creditos[rodadaDoJogador] < eventoBom)
+                    {
+                        Debug.Log("Voce e pobre");
+                        break;
+                    }
+
+                    Debug.Log("Evento 6");
+                    break;
+                case 7:
+
+                    if (creditos[rodadaDoJogador] < eventoOtimo)
+                    {
+                        Debug.Log("Voce e pobre");
+                        break;
+                    }
+
+                    Debug.Log("Evento 7");
+                    break;
+                case 8:
+
+                    if (creditos[rodadaDoJogador] < eventoOtimo)
+                    {
+                        Debug.Log("Voce e pobre");
+                        break;
+                    }
+
+                    Debug.Log("Evento 8");
+                    break;
+                case 9:
+
+                    if (creditos[rodadaDoJogador] < eventoOtimo)
+                    {
+                        Debug.Log("Voce e pobre");
+                        break;
+                    }
+
+                    Debug.Log("Evento 9");
+                    break;
+            }
+        }
+        else
+        {
+            Debug.Log("No momento a loja esta fechada");
+        }
+
+    }
+
     /// <summary>
     /// função criada para quando uma carta for jogada para a pilha de discarte
     /// </summary>
     /// <param name="card"></param>
     public void MoveToDiscardPile(Card card)
     {
-
         // adicionando a carta na pilha de discarte
         discardPile.Add(card);
         
-
         // para trocar a imagem do botao para a da carta que foi descartada
         buttonD.GetComponent<Image>().sprite = card.GetComponent<Image>().sprite;
 
-        // impedindo o jogador de discartar mais cartas - escondendo a carta da dysfunção - Permitindo rolar o dado da tabela
+        // impedindo o jogador de discartar mais cartas 
         discartaCarta = false;
-        resetDysfuncao = true;
-        rolarDado = true;
-
-        // Girando os deks quando o player passar a vez
-        switch (rodadaDoJogador)
-        {
-            case 0:
-                // Player 1
-                for (int i = 0; i < deckPlayer1.Count; i++)
-                {
-                    deckPlayer1[i].transform.position = cardSlotsPlayer4[deckPlayer1[i].handIndex].position;
-                    deckPlayer1[i].transform.rotation = cardSlotsPlayer4[deckPlayer1[i].handIndex].rotation;
-                }
-                // Player 2
-                for (int i = 0; i < deckPlayer2.Count; i++)
-                {
-                    deckPlayer2[i].transform.position = cardSlotsPlayer1[deckPlayer2[i].handIndex].position;
-                    deckPlayer2[i].transform.rotation = cardSlotsPlayer1[deckPlayer2[i].handIndex].rotation;
-                }
-                // Player 3
-                for (int i = 0;i < deckPlayer3.Count; i++)
-                {
-                    deckPlayer3[i].transform.position = cardSlotsPlayer2[deckPlayer3[i].handIndex].position;
-                    deckPlayer3[i].transform.rotation = cardSlotsPlayer2[deckPlayer3[i].handIndex].rotation;
-                }
-                // Player 4
-                for (int i = 0; i < deckPlayer4.Count; i++)
-                {
-                    deckPlayer4[i].transform.position = cardSlotsPlayer3[deckPlayer4[i].handIndex].position;
-                    deckPlayer4[i].transform.rotation = cardSlotsPlayer3[deckPlayer4[i].handIndex].rotation;
-                }
-                // dysfunção player 1
-                cardsDysfunctions[0].transform.position = dysfunSlots[3].position;
-                cardsDysfunctions[0].transform.rotation = dysfunSlots[3].rotation;
-                
-                // dysfunção player 2
-                cardsDysfunctions[1].transform.position = dysfunSlots[0].position;
-                cardsDysfunctions[1].transform.rotation = dysfunSlots[0].rotation;
-                
-                // dysfunção player 3
-                cardsDysfunctions[2].transform.position = dysfunSlots[1].position;
-                cardsDysfunctions[2].transform.rotation = dysfunSlots[1].rotation;
-                
-                // dysfunção player 4
-                cardsDysfunctions[3].transform.position = dysfunSlots[2].position;
-                cardsDysfunctions[3].transform.rotation = dysfunSlots[2].rotation;
-                
-                // Alterando os nomes dos players de posições
-                nicknamesTransform[0].position = nicknamesVector3T[3];
-                nicknamesTransform[0].rotation = nicknamesQuaternion[3];
-                nicknamesTransform[0].pivot = nicknamesVector2P[3];
-
-                nicknamesTransform[1].position = nicknamesVector3T[0];
-                nicknamesTransform[1].rotation = nicknamesQuaternion[0];
-                nicknamesTransform[1].pivot = nicknamesVector2P[0];
-
-                nicknamesTransform[2].position = nicknamesVector3T[1];
-                nicknamesTransform[2].rotation = nicknamesQuaternion[1];
-                nicknamesTransform[2].pivot = nicknamesVector2P[1];
-
-                nicknamesTransform[3].position = nicknamesVector3T[2];
-                nicknamesTransform[3].rotation = nicknamesQuaternion[2];
-                nicknamesTransform[3].pivot = nicknamesVector2P[2];
-
-                break;
-            case 1:
-                for (int i = 0; i < deckPlayer1.Count; i++)
-                {
-                    deckPlayer1[i].transform.position = cardSlotsPlayer3[deckPlayer1[i].handIndex].position;
-                    deckPlayer1[i].transform.rotation = cardSlotsPlayer3[deckPlayer1[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer2.Count; i++)
-                {
-                    deckPlayer2[i].transform.position = cardSlotsPlayer4[deckPlayer2[i].handIndex].position;
-                    deckPlayer2[i].transform.rotation = cardSlotsPlayer4[deckPlayer2[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer3.Count; i++)
-                {
-                    deckPlayer3[i].transform.position = cardSlotsPlayer1[deckPlayer3[i].handIndex].position;
-                    deckPlayer3[i].transform.rotation = cardSlotsPlayer1[deckPlayer3[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer4.Count; i++)
-                {
-                    deckPlayer4[i].transform.position = cardSlotsPlayer2[deckPlayer4[i].handIndex].position;
-                    deckPlayer4[i].transform.rotation = cardSlotsPlayer2[deckPlayer4[i].handIndex].rotation;
-                }
-                // dysfunção player 1
-                cardsDysfunctions[0].transform.position = dysfunSlots[2].position;
-                cardsDysfunctions[0].transform.rotation = dysfunSlots[2].rotation;
-                // dysfunção player 2
-                cardsDysfunctions[1].transform.position = dysfunSlots[3].position;
-                cardsDysfunctions[1].transform.rotation = dysfunSlots[3].rotation;
-                // dysfunção player 3
-                cardsDysfunctions[2].transform.position = dysfunSlots[0].position;
-                cardsDysfunctions[2].transform.rotation = dysfunSlots[0].rotation;
-                // dysfunção player 4
-                cardsDysfunctions[3].transform.position = dysfunSlots[1].position;
-                cardsDysfunctions[3].transform.rotation = dysfunSlots[1].rotation;
-
-                // Alterando os nomes dos players de posições
-                nicknamesTransform[0].position = nicknamesVector3T[2];
-                nicknamesTransform[0].rotation = nicknamesQuaternion[2];
-                nicknamesTransform[0].pivot = nicknamesVector2P[2];
-
-                nicknamesTransform[1].position = nicknamesVector3T[3];
-                nicknamesTransform[1].rotation = nicknamesQuaternion[3];
-                nicknamesTransform[1].pivot = nicknamesVector2P[3];
-
-                nicknamesTransform[2].position = nicknamesVector3T[0];
-                nicknamesTransform[2].rotation = nicknamesQuaternion[0];
-                nicknamesTransform[2].pivot = nicknamesVector2P[0];
-
-                nicknamesTransform[3].position = nicknamesVector3T[1];
-                nicknamesTransform[3].rotation = nicknamesQuaternion[1];
-                nicknamesTransform[3].pivot = nicknamesVector2P[1];
-                break;
-            case 2:
-                for (int i = 0; i < deckPlayer1.Count; i++)
-                {
-                    deckPlayer1[i].transform.position = cardSlotsPlayer2[deckPlayer1[i].handIndex].position;
-                    deckPlayer1[i].transform.rotation = cardSlotsPlayer2[deckPlayer1[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer2.Count; i++)
-                {
-                    deckPlayer2[i].transform.position = cardSlotsPlayer3[deckPlayer2[i].handIndex].position;
-                    deckPlayer2[i].transform.rotation = cardSlotsPlayer3[deckPlayer2[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer3.Count; i++)
-                {
-                    deckPlayer3[i].transform.position = cardSlotsPlayer4[deckPlayer3[i].handIndex].position;
-                    deckPlayer3[i].transform.rotation = cardSlotsPlayer4[deckPlayer3[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer4.Count; i++)
-                {
-                    deckPlayer4[i].transform.position = cardSlotsPlayer1[deckPlayer4[i].handIndex].position;
-                    deckPlayer4[i].transform.rotation = cardSlotsPlayer1[deckPlayer4[i].handIndex].rotation;
-                }
-                // dysfunção player 1
-                cardsDysfunctions[0].transform.position = dysfunSlots[1].position;
-                cardsDysfunctions[0].transform.rotation = dysfunSlots[1].rotation;
-                // dysfunção player 2
-                cardsDysfunctions[1].transform.position = dysfunSlots[2].position;
-                cardsDysfunctions[1].transform.rotation = dysfunSlots[2].rotation;
-                // dysfunção player 3
-                cardsDysfunctions[2].transform.position = dysfunSlots[3].position;
-                cardsDysfunctions[2].transform.rotation = dysfunSlots[3].rotation;
-                // dysfunção player 4
-                cardsDysfunctions[3].transform.position = dysfunSlots[0].position;
-                cardsDysfunctions[3].transform.rotation = dysfunSlots[0].rotation;
-
-                // Alterando os nomes dos players de posições
-                nicknamesTransform[0].position = nicknamesVector3T[1];
-                nicknamesTransform[0].rotation = nicknamesQuaternion[1];
-                nicknamesTransform[0].pivot = nicknamesVector2P[1];
-
-                nicknamesTransform[1].position = nicknamesVector3T[2];
-                nicknamesTransform[1].rotation = nicknamesQuaternion[2];
-                nicknamesTransform[1].pivot = nicknamesVector2P[2];
-
-                nicknamesTransform[2].position = nicknamesVector3T[3];
-                nicknamesTransform[2].rotation = nicknamesQuaternion[3];
-                nicknamesTransform[2].pivot = nicknamesVector2P[3];
-
-                nicknamesTransform[3].position = nicknamesVector3T[0];
-                nicknamesTransform[3].rotation = nicknamesQuaternion[0];
-                nicknamesTransform[3].pivot = nicknamesVector2P[0];
-                break;
-            case 3:
-                for (int i = 0; i < deckPlayer1.Count; i++)
-                {
-                    deckPlayer1[i].transform.position = cardSlotsPlayer1[deckPlayer1[i].handIndex].position;
-                    deckPlayer1[i].transform.rotation = cardSlotsPlayer1[deckPlayer1[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer2.Count; i++)
-                {
-                    deckPlayer2[i].transform.position = cardSlotsPlayer2[deckPlayer2[i].handIndex].position;
-                    deckPlayer2[i].transform.rotation = cardSlotsPlayer2[deckPlayer2[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer3.Count; i++)
-                {
-                    deckPlayer3[i].transform.position = cardSlotsPlayer3[deckPlayer3[i].handIndex].position;
-                    deckPlayer3[i].transform.rotation = cardSlotsPlayer3[deckPlayer3[i].handIndex].rotation;
-                }
-                for (int i = 0; i < deckPlayer4.Count; i++)
-                {
-                    deckPlayer4[i].transform.position = cardSlotsPlayer4[deckPlayer4[i].handIndex].position;
-                    deckPlayer4[i].transform.rotation = cardSlotsPlayer4[deckPlayer4[i].handIndex].rotation;
-                }
-                // dysfunção player 1
-                cardsDysfunctions[0].transform.position = dysfunSlots[0].position;
-                cardsDysfunctions[0].transform.rotation = dysfunSlots[0].rotation;
-                // dysfunção player 2
-                cardsDysfunctions[1].transform.position = dysfunSlots[1].position;
-                cardsDysfunctions[1].transform.rotation = dysfunSlots[1].rotation;
-                // dysfunção player 3
-                cardsDysfunctions[2].transform.position = dysfunSlots[2].position;
-                cardsDysfunctions[2].transform.rotation = dysfunSlots[2].rotation;
-                // dysfunção player 4
-                cardsDysfunctions[3].transform.position = dysfunSlots[3].position;
-                cardsDysfunctions[3].transform.rotation = dysfunSlots[3].rotation;
-
-                // Alterando os nomes dos players de posições
-                nicknamesTransform[0].position = nicknamesVector3T[0];
-                nicknamesTransform[0].rotation = nicknamesQuaternion[0];
-                nicknamesTransform[0].pivot = nicknamesVector2P[0];
-
-                nicknamesTransform[1].position = nicknamesVector3T[1];
-                nicknamesTransform[1].rotation = nicknamesQuaternion[1];
-                nicknamesTransform[1].pivot = nicknamesVector2P[1];
-
-                nicknamesTransform[2].position = nicknamesVector3T[2];
-                nicknamesTransform[2].rotation = nicknamesQuaternion[2];
-                nicknamesTransform[2].pivot = nicknamesVector2P[2];
-
-                nicknamesTransform[3].position = nicknamesVector3T[3];
-                nicknamesTransform[3].rotation = nicknamesQuaternion[3];
-                nicknamesTransform[3].pivot = nicknamesVector2P[3];
-                break;
-        }
-
-        // passando para o proximo jogador jogar
-        rodadaDoJogador++;
-
-        // verificando se foi o ultimo jogador que jogou
-        if (rodadaDoJogador == numPlayerNoJogo)
-        {
-            // recomeçando a rodada
-            rodadaDoJogador = 0;
-
-            // Adicionando para os jogadores os creditos semanais
-            for(int i = 0; i < creditos.Length; i++)
-            {
-                creditos[i] = creditos[i] + creditosFimSemana;
-                textCreditos[i].text = "X" + Convert.ToString(creditos[i]);
-            }
-            // e aumentando uma rodada no contador de turnos
-            rodada++;
-            contador.text = "Semana: " + rodada;
-
-            // verificando se chegou na ultima rodada
-            if (rodada == rodadaFinal)
-            {
-                //MODOS DE "PAUSAR O JOGO"
-                rodadaDoJogador = 10;
-
-                // chamando o parte dois do jogo (montar o tratamento)
-                SetUpTreatment();
-            }
-
-        }
-        
-
+        passarTurno = true;
     }
+
+    public void PassandoTurno()
+    {
+        if (passarTurno == true)
+        {
+            // impedindo do jogador usar a loja - escondendo a carta da dysfunção - Permitindo rolar o dado da tabela
+            lojaAberta = false;
+            resetDysfuncao = true;
+            rolarDado = true;
+
+            // Girando os deks quando o player passar a vez
+            switch (rodadaDoJogador)
+            {
+                case 0:
+                    // Player 1
+                    for (int i = 0; i < deckPlayer1.Count; i++)
+                    {
+                        deckPlayer1[i].transform.position = cardSlotsPlayer4[deckPlayer1[i].handIndex].position;
+                        deckPlayer1[i].transform.rotation = cardSlotsPlayer4[deckPlayer1[i].handIndex].rotation;
+                    }
+                    // Player 2
+                    for (int i = 0; i < deckPlayer2.Count; i++)
+                    {
+                        deckPlayer2[i].transform.position = cardSlotsPlayer1[deckPlayer2[i].handIndex].position;
+                        deckPlayer2[i].transform.rotation = cardSlotsPlayer1[deckPlayer2[i].handIndex].rotation;
+                    }
+                    // Player 3
+                    for (int i = 0; i < deckPlayer3.Count; i++)
+                    {
+                        deckPlayer3[i].transform.position = cardSlotsPlayer2[deckPlayer3[i].handIndex].position;
+                        deckPlayer3[i].transform.rotation = cardSlotsPlayer2[deckPlayer3[i].handIndex].rotation;
+                    }
+                    // Player 4
+                    for (int i = 0; i < deckPlayer4.Count; i++)
+                    {
+                        deckPlayer4[i].transform.position = cardSlotsPlayer3[deckPlayer4[i].handIndex].position;
+                        deckPlayer4[i].transform.rotation = cardSlotsPlayer3[deckPlayer4[i].handIndex].rotation;
+                    }
+                    // dysfunção player 1
+                    cardsDysfunctions[0].transform.position = dysfunSlots[3].position;
+                    cardsDysfunctions[0].transform.rotation = dysfunSlots[3].rotation;
+
+                    // dysfunção player 2
+                    cardsDysfunctions[1].transform.position = dysfunSlots[0].position;
+                    cardsDysfunctions[1].transform.rotation = dysfunSlots[0].rotation;
+
+                    // dysfunção player 3
+                    cardsDysfunctions[2].transform.position = dysfunSlots[1].position;
+                    cardsDysfunctions[2].transform.rotation = dysfunSlots[1].rotation;
+
+                    // dysfunção player 4
+                    cardsDysfunctions[3].transform.position = dysfunSlots[2].position;
+                    cardsDysfunctions[3].transform.rotation = dysfunSlots[2].rotation;
+
+                    // Alterando os nomes dos players de posições
+                    nicknamesTransform[0].position = nicknamesVector3T[3];
+                    nicknamesTransform[0].rotation = nicknamesQuaternion[3];
+                    nicknamesTransform[0].pivot = nicknamesVector2P[3];
+
+                    nicknamesTransform[1].position = nicknamesVector3T[0];
+                    nicknamesTransform[1].rotation = nicknamesQuaternion[0];
+                    nicknamesTransform[1].pivot = nicknamesVector2P[0];
+
+                    nicknamesTransform[2].position = nicknamesVector3T[1];
+                    nicknamesTransform[2].rotation = nicknamesQuaternion[1];
+                    nicknamesTransform[2].pivot = nicknamesVector2P[1];
+
+                    nicknamesTransform[3].position = nicknamesVector3T[2];
+                    nicknamesTransform[3].rotation = nicknamesQuaternion[2];
+                    nicknamesTransform[3].pivot = nicknamesVector2P[2];
+
+                    break;
+                case 1:
+                    for (int i = 0; i < deckPlayer1.Count; i++)
+                    {
+                        deckPlayer1[i].transform.position = cardSlotsPlayer3[deckPlayer1[i].handIndex].position;
+                        deckPlayer1[i].transform.rotation = cardSlotsPlayer3[deckPlayer1[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer2.Count; i++)
+                    {
+                        deckPlayer2[i].transform.position = cardSlotsPlayer4[deckPlayer2[i].handIndex].position;
+                        deckPlayer2[i].transform.rotation = cardSlotsPlayer4[deckPlayer2[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer3.Count; i++)
+                    {
+                        deckPlayer3[i].transform.position = cardSlotsPlayer1[deckPlayer3[i].handIndex].position;
+                        deckPlayer3[i].transform.rotation = cardSlotsPlayer1[deckPlayer3[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer4.Count; i++)
+                    {
+                        deckPlayer4[i].transform.position = cardSlotsPlayer2[deckPlayer4[i].handIndex].position;
+                        deckPlayer4[i].transform.rotation = cardSlotsPlayer2[deckPlayer4[i].handIndex].rotation;
+                    }
+                    // dysfunção player 1
+                    cardsDysfunctions[0].transform.position = dysfunSlots[2].position;
+                    cardsDysfunctions[0].transform.rotation = dysfunSlots[2].rotation;
+                    // dysfunção player 2
+                    cardsDysfunctions[1].transform.position = dysfunSlots[3].position;
+                    cardsDysfunctions[1].transform.rotation = dysfunSlots[3].rotation;
+                    // dysfunção player 3
+                    cardsDysfunctions[2].transform.position = dysfunSlots[0].position;
+                    cardsDysfunctions[2].transform.rotation = dysfunSlots[0].rotation;
+                    // dysfunção player 4
+                    cardsDysfunctions[3].transform.position = dysfunSlots[1].position;
+                    cardsDysfunctions[3].transform.rotation = dysfunSlots[1].rotation;
+
+                    // Alterando os nomes dos players de posições
+                    nicknamesTransform[0].position = nicknamesVector3T[2];
+                    nicknamesTransform[0].rotation = nicknamesQuaternion[2];
+                    nicknamesTransform[0].pivot = nicknamesVector2P[2];
+
+                    nicknamesTransform[1].position = nicknamesVector3T[3];
+                    nicknamesTransform[1].rotation = nicknamesQuaternion[3];
+                    nicknamesTransform[1].pivot = nicknamesVector2P[3];
+
+                    nicknamesTransform[2].position = nicknamesVector3T[0];
+                    nicknamesTransform[2].rotation = nicknamesQuaternion[0];
+                    nicknamesTransform[2].pivot = nicknamesVector2P[0];
+
+                    nicknamesTransform[3].position = nicknamesVector3T[1];
+                    nicknamesTransform[3].rotation = nicknamesQuaternion[1];
+                    nicknamesTransform[3].pivot = nicknamesVector2P[1];
+                    break;
+                case 2:
+                    for (int i = 0; i < deckPlayer1.Count; i++)
+                    {
+                        deckPlayer1[i].transform.position = cardSlotsPlayer2[deckPlayer1[i].handIndex].position;
+                        deckPlayer1[i].transform.rotation = cardSlotsPlayer2[deckPlayer1[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer2.Count; i++)
+                    {
+                        deckPlayer2[i].transform.position = cardSlotsPlayer3[deckPlayer2[i].handIndex].position;
+                        deckPlayer2[i].transform.rotation = cardSlotsPlayer3[deckPlayer2[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer3.Count; i++)
+                    {
+                        deckPlayer3[i].transform.position = cardSlotsPlayer4[deckPlayer3[i].handIndex].position;
+                        deckPlayer3[i].transform.rotation = cardSlotsPlayer4[deckPlayer3[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer4.Count; i++)
+                    {
+                        deckPlayer4[i].transform.position = cardSlotsPlayer1[deckPlayer4[i].handIndex].position;
+                        deckPlayer4[i].transform.rotation = cardSlotsPlayer1[deckPlayer4[i].handIndex].rotation;
+                    }
+                    // dysfunção player 1
+                    cardsDysfunctions[0].transform.position = dysfunSlots[1].position;
+                    cardsDysfunctions[0].transform.rotation = dysfunSlots[1].rotation;
+                    // dysfunção player 2
+                    cardsDysfunctions[1].transform.position = dysfunSlots[2].position;
+                    cardsDysfunctions[1].transform.rotation = dysfunSlots[2].rotation;
+                    // dysfunção player 3
+                    cardsDysfunctions[2].transform.position = dysfunSlots[3].position;
+                    cardsDysfunctions[2].transform.rotation = dysfunSlots[3].rotation;
+                    // dysfunção player 4
+                    cardsDysfunctions[3].transform.position = dysfunSlots[0].position;
+                    cardsDysfunctions[3].transform.rotation = dysfunSlots[0].rotation;
+
+                    // Alterando os nomes dos players de posições
+                    nicknamesTransform[0].position = nicknamesVector3T[1];
+                    nicknamesTransform[0].rotation = nicknamesQuaternion[1];
+                    nicknamesTransform[0].pivot = nicknamesVector2P[1];
+
+                    nicknamesTransform[1].position = nicknamesVector3T[2];
+                    nicknamesTransform[1].rotation = nicknamesQuaternion[2];
+                    nicknamesTransform[1].pivot = nicknamesVector2P[2];
+
+                    nicknamesTransform[2].position = nicknamesVector3T[3];
+                    nicknamesTransform[2].rotation = nicknamesQuaternion[3];
+                    nicknamesTransform[2].pivot = nicknamesVector2P[3];
+
+                    nicknamesTransform[3].position = nicknamesVector3T[0];
+                    nicknamesTransform[3].rotation = nicknamesQuaternion[0];
+                    nicknamesTransform[3].pivot = nicknamesVector2P[0];
+                    break;
+                case 3:
+                    for (int i = 0; i < deckPlayer1.Count; i++)
+                    {
+                        deckPlayer1[i].transform.position = cardSlotsPlayer1[deckPlayer1[i].handIndex].position;
+                        deckPlayer1[i].transform.rotation = cardSlotsPlayer1[deckPlayer1[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer2.Count; i++)
+                    {
+                        deckPlayer2[i].transform.position = cardSlotsPlayer2[deckPlayer2[i].handIndex].position;
+                        deckPlayer2[i].transform.rotation = cardSlotsPlayer2[deckPlayer2[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer3.Count; i++)
+                    {
+                        deckPlayer3[i].transform.position = cardSlotsPlayer3[deckPlayer3[i].handIndex].position;
+                        deckPlayer3[i].transform.rotation = cardSlotsPlayer3[deckPlayer3[i].handIndex].rotation;
+                    }
+                    for (int i = 0; i < deckPlayer4.Count; i++)
+                    {
+                        deckPlayer4[i].transform.position = cardSlotsPlayer4[deckPlayer4[i].handIndex].position;
+                        deckPlayer4[i].transform.rotation = cardSlotsPlayer4[deckPlayer4[i].handIndex].rotation;
+                    }
+                    // dysfunção player 1
+                    cardsDysfunctions[0].transform.position = dysfunSlots[0].position;
+                    cardsDysfunctions[0].transform.rotation = dysfunSlots[0].rotation;
+                    // dysfunção player 2
+                    cardsDysfunctions[1].transform.position = dysfunSlots[1].position;
+                    cardsDysfunctions[1].transform.rotation = dysfunSlots[1].rotation;
+                    // dysfunção player 3
+                    cardsDysfunctions[2].transform.position = dysfunSlots[2].position;
+                    cardsDysfunctions[2].transform.rotation = dysfunSlots[2].rotation;
+                    // dysfunção player 4
+                    cardsDysfunctions[3].transform.position = dysfunSlots[3].position;
+                    cardsDysfunctions[3].transform.rotation = dysfunSlots[3].rotation;
+
+                    // Alterando os nomes dos players de posições
+                    nicknamesTransform[0].position = nicknamesVector3T[0];
+                    nicknamesTransform[0].rotation = nicknamesQuaternion[0];
+                    nicknamesTransform[0].pivot = nicknamesVector2P[0];
+
+                    nicknamesTransform[1].position = nicknamesVector3T[1];
+                    nicknamesTransform[1].rotation = nicknamesQuaternion[1];
+                    nicknamesTransform[1].pivot = nicknamesVector2P[1];
+
+                    nicknamesTransform[2].position = nicknamesVector3T[2];
+                    nicknamesTransform[2].rotation = nicknamesQuaternion[2];
+                    nicknamesTransform[2].pivot = nicknamesVector2P[2];
+
+                    nicknamesTransform[3].position = nicknamesVector3T[3];
+                    nicknamesTransform[3].rotation = nicknamesQuaternion[3];
+                    nicknamesTransform[3].pivot = nicknamesVector2P[3];
+                    break;
+            }
+
+            // passando para o proximo jogador jogar
+            rodadaDoJogador++;
+
+            // verificando se foi o ultimo jogador que jogou
+            if (rodadaDoJogador == numPlayerNoJogo)
+            {
+                // recomeçando a rodada
+                rodadaDoJogador = 0;
+
+                // Adicionando para os jogadores os creditos semanais
+                for (int i = 0; i < creditos.Length; i++)
+                {
+                    creditos[i] = creditos[i] + creditosFimSemana;
+                    textCreditos[i].text = "X" + Convert.ToString(creditos[i]);
+                }
+                // e aumentando uma rodada no contador de turnos
+                rodada++;
+                contador.text = "Semana: " + rodada;
+
+                // verificando se chegou na ultima rodada
+                if (rodada == rodadaFinal)
+                {
+                    //MODOS DE "PAUSAR O JOGO"
+                    rodadaDoJogador = 10;
+
+                    // chamando o parte dois do jogo (montar o tratamento)
+                    SetUpTreatment();
+                }
+
+            }
+            passarTurno = false;
+        }
+    }
+
+    /// <summary>
+    /// Aqui vai ser desemvolvida a parte onde os jogadores teram um tempo para montar o tratamento deles para apresentar
+    /// para o mestre
+    /// </summary>
+    public void SetUpTreatment()
+    {
+        Debug.Log("COMEÇA A PARTE DOIS DO JOGO (MONTAR O TRATAMENTO COM AS CARTAS QUE TEM)");
+    }
+
+    #region funções de botões para abrir e fechar janelas 
+
+    //abrindo a loja
+    public void OpenStore()
+    {
+        painelLoja.SetActive(true);
+    }
+
+    // fechando a loja
+    public void CloseStore()
+    {
+        painelLoja.SetActive(false);
+    }
+
+    // fechando o painel do numero aleatorio
+    public void ClosePainelNum()
+    {
+        // desativando painel de numero do dado
+        painelNum.SetActive(false);
+    }
+
+    #endregion
 
     /// <summary>
     /// função para embaralhar as cartas que estão no baralho de descarte
@@ -1148,15 +1411,6 @@ public class GameManager : MonoBehaviour
             // esvaziando a Array
             discardPile.Clear();
         }
-    }
-
-    /// <summary>
-    /// Aqui vai ser desemvolvida a parte onde os jogadores teram um tempo para montar o tratamento deles para apresentar
-    /// para o mestre
-    /// </summary>
-    public void SetUpTreatment()
-    {
-        Debug.Log("COMEÇA A PARTE DOIS DO JOGO (MONTAR O TRATAMENTO COM AS CARTAS QUE TEM)");
     }
 
 }

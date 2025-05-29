@@ -26,6 +26,10 @@ public class DiscartButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerEnter(PointerEventData eventData)
     {
         cartaExpandida.GetComponent<Image>().sprite = gameObject.GetComponent<Image>().sprite;
+
+        // fechando o painel do numero aleatorio do dado
+        gm.ClosePainelNum();
+
     }
 
     /// <summary>
@@ -34,7 +38,7 @@ public class DiscartButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// <param name="eventData"></param>
     public void OnPointerExit(PointerEventData eventData)
     {
-        cartaExpandida.GetComponent<Image>().sprite = gm.imageSemcard;
+        cartaExpandida.GetComponent<Image>().sprite = gm.imagemVazio;
     }
 
     /// <summary>
@@ -44,6 +48,7 @@ public class DiscartButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerClick(PointerEventData eventData)
     {
         cartaExpandida.GetComponent<Image>().sprite = gameObject.GetComponent<Image>().sprite;
+
     }
 
 }

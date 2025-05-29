@@ -61,14 +61,13 @@ public class CardDysfunc : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
                     gameObject.GetComponent<Image>().sprite = cartaFundo;
 
-                    cartaEx.GetComponent<Image>().sprite = gm.imageSemcard;
+                    cartaEx.GetComponent<Image>().sprite = gm.imagemVazio;
 
                     cartaVirada = false;
 
                     soltou = true;
 
                     gm.resetDysfuncao = false;
-
                 }
                 break;
             // se for o player 3 e a reset da carta for verdadeiro e a layer for a do player 2 vira a carta reseta o timer e as variaveis de verificação
@@ -79,7 +78,7 @@ public class CardDysfunc : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
                     gameObject.GetComponent<Image>().sprite = cartaFundo;
 
-                    cartaEx.GetComponent<Image>().sprite = gm.imageSemcard;
+                    cartaEx.GetComponent<Image>().sprite = gm.imagemVazio;
                     
                     cartaVirada = false;
 
@@ -96,7 +95,7 @@ public class CardDysfunc : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
                     gameObject.GetComponent<Image>().sprite = cartaFundo;
                     
-                    cartaEx.GetComponent<Image>().sprite = gm.imageSemcard;
+                    cartaEx.GetComponent<Image>().sprite = gm.imagemVazio;
 
                     cartaVirada = false;
 
@@ -113,7 +112,7 @@ public class CardDysfunc : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
                     gameObject.GetComponent<Image>().sprite = cartaFundo;
 
-                    cartaEx.GetComponent<Image>().sprite = gm.imageSemcard;
+                    cartaEx.GetComponent<Image>().sprite = gm.imagemVazio;
 
                     cartaVirada = false;
 
@@ -141,6 +140,9 @@ public class CardDysfunc : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
                 // indicando que a carta foi virada
                 cartaVirada = true;
+
+                // fechando o painel do numero aleatorio do dado
+                gm.ClosePainelNum();
             }
         }
 
@@ -169,7 +171,7 @@ public class CardDysfunc : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerExit(PointerEventData eventData)
     {
         // alterando a imagem da carta expandida para vazia
-        cartaEx.GetComponent<Image>().sprite = gm.imageSemcard;
+        cartaEx.GetComponent<Image>().sprite = gm.imagemVazio;
         
         // resetando o timer
         timer = 0;
@@ -227,7 +229,7 @@ public class CardDysfunc : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             soltou = true;
             cartaVirada = false;
             gameObject.GetComponent<Image>().sprite = cartaFundo;
-            cartaEx.GetComponent<Image>().sprite = gm.imageSemcard;
+            cartaEx.GetComponent<Image>().sprite = gm.imagemVazio;
             timer = 0;
         }
     }

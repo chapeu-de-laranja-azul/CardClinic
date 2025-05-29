@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 
 public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
@@ -18,14 +19,17 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     // criando uma variavel do tipo GameManager com nome de gm
     private GameManager gm;
 
+    public Canvas canvas;
+
     /// <summary>
     /// classe executada quando comeca o jogo, 1 vez e primeira que as outras
     /// </summary>
     private void Start()
     {
-        // procurando o objeto GameManager e colocamdo ele na variavel
+        // procurando o objeto GameManager e colocando ele na variavel
         gm = FindObjectOfType<GameManager>();
-        
+
+        canvas = gameObject.GetComponent<Canvas>();
     }
     
     /// <summary>
@@ -33,6 +37,9 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
+        // diminuindo a carta
+        transform.localScale = new Vector3(0.5f, 0.5f, 1);
+
         // verificando qual jogador e da vez
         switch (gm.rodadaDoJogador)
         {
@@ -41,15 +48,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 // verificando se nao foi jogada a carta se pode discartar e se é a camada do player certa
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl1)
                 {
-                    // levando a carta um pouco para cima - avisando que ja foi jogada a carta
-                    transform.position += Vector3.up * 1;       
+                    // avisando que ja foi jogada a carta       
                     hasBeenPlayed = true;
 
                     // avisando que aquele slot de carta esta vazio
                     gm.slotsDisponiveisCartasPlayer1[handIndex] = true;
 
-                    // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
-                    cartaExpandida.GetComponent<Image>().sprite = null;
+                    // alterando a imagem da carta expandida para vazia - desativando a carta depois que ela for para a pilha de discarte
+                    cartaExpandida.GetComponent<Image>().sprite = gm.imagemVazio;
                     gameObject.SetActive(false);
 
                     // chamando a funcao que esta no GameManager e passando essa carta junto
@@ -63,15 +69,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 // verificando se nao foi jogada a carta se pode discartar e se é a camada do player certa
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl2)
                 {
-                    // levando a carta um pouco para cima - avisando que ja foi jogada a carta
-                    transform.position += Vector3.up * 1;
+                    // avisando que ja foi jogada a carta
                     hasBeenPlayed = true;
 
                     // avisando que aquele slot de carta esta vazio
                     gm.slotsDisponiveisCartasPlayer2[handIndex] = true;
 
-                    // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
-                    cartaExpandida.GetComponent<Image>().sprite = null;
+                    // alterando a imagem da carta expandida para vazia - desativando a carta depois que ela for para a pilha de discarte
+                    cartaExpandida.GetComponent<Image>().sprite = gm.imagemVazio;
                     gameObject.SetActive(false);
 
                     // chamando a funcao que esta no GameManager e passando essa carta junto
@@ -85,15 +90,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 // verificando se nao foi jogada a carta se pode discartar e se é a camada do player certa
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl3)
                 {
-                    // levando a carta um pouco para cima - avisando que ja foi jogada a carta
-                    transform.position += Vector3.up * 1;
+                    // avisando que ja foi jogada a carta
                     hasBeenPlayed = true;
 
                     // avisando que aquele slot de carta esta vazio
                     gm.slotsDisponiveisCartasPlayer3[handIndex] = true;
 
-                    // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
-                    cartaExpandida.GetComponent<Image>().sprite = null;
+                    // alterando a imagem da carta expandida para vazia - desativando a carta depois que ela for para a pilha de discarte
+                    cartaExpandida.GetComponent<Image>().sprite = gm.imagemVazio;
                     gameObject.SetActive(false);
 
                     // chamando a funcao que esta no GameManager e passando essa carta junto
@@ -107,15 +111,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                 // verificando se nao foi jogada a carta se pode discartar e se é a camada do player certa
                 if (hasBeenPlayed == false && gm.discartaCarta && gameObject.layer == gm.layerPl4)
                 {
-                    // levando a carta um pouco para cima - avisando que ja foi jogada a carta
-                    transform.position += Vector3.up * 1;
+                    // avisando que ja foi jogada a carta
                     hasBeenPlayed = true;
 
                     // avisando que aquele slot de carta esta vazio
                     gm.slotsDisponiveisCartasPlayer4[handIndex] = true;
 
-                    // desativando a carta de amostra - desativando a carta depois que ela for para a pilha de discarte
-                    cartaExpandida.GetComponent<Image>().sprite = null;
+                    // alterando a imagem da carta expandida para vazia - desativando a carta depois que ela for para a pilha de discarte
+                    cartaExpandida.GetComponent<Image>().sprite = gm.imagemVazio;
                     gameObject.SetActive(false);
 
                     // chamando a funcao que esta no GameManager e passando essa carta junto
@@ -132,8 +135,18 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     /// </summary>
     public void OnPointerEnter(PointerEventData eventData)
     {
+        // deixando a carta na frente de todas
+        canvas.sortingOrder = 100;
+
+        // expandido a carta
+        transform.localScale = new Vector3(0.6f, 0.6f, 1);
+
         // alterando a imagem da carta expandida para a da carta
         cartaExpandida.GetComponent<Image>().sprite = gameObject.GetComponent<Image>().sprite;
+
+        // fechando o painel do numero aleatorio do dado
+        gm.ClosePainelNum();
+
     }
 
     /// <summary>
@@ -141,8 +154,14 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     /// </summary>
     public void OnPointerExit(PointerEventData eventData)
     {
+        // retornando a carta para a ordem dela na mão
+        canvas.sortingOrder = handIndex;
+
+        // diminuindo a carta
+        transform.localScale = new Vector3(0.5f, 0.5f, 1);
+
         // alterando a imagem da carta expandida para vazia
-        cartaExpandida.GetComponent<Image>().sprite = gm.imageSemcard;
+        cartaExpandida.GetComponent<Image>().sprite = gm.imagemVazio;
     }
 
 }
