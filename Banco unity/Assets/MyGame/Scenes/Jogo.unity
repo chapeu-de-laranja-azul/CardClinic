@@ -7817,7 +7817,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 857700011}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &857700011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9239,6 +9251,7 @@ MonoBehaviour:
   deckPlayer2: []
   deckPlayer3: []
   deckPlayer4: []
+  cartaExtra: {fileID: 0}
   dysfunSlots:
   - {fileID: 1806443182}
   - {fileID: 267728279}
@@ -9289,11 +9302,12 @@ MonoBehaviour:
   - {fileID: 768832479}
   - {fileID: 1351964640}
   - {fileID: 1229616065}
-  slotCartaExtra: {fileID: 1371366988}
+  slotCartaExtraTransform: {fileID: 1371366988}
   slotsDisponiveisCartasPlayer1: 010101010101010101
   slotsDisponiveisCartasPlayer2: 010101010101010101
   slotsDisponiveisCartasPlayer3: 010101010101010101
   slotsDisponiveisCartasPlayer4: 010101010101010101
+  slotCartaExtraDisponivel: 1
   rolarDado: 1
   compraCarta: 0
   lojaAberta: 0

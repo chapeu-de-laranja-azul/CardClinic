@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public List<Card> deckPlayer2 = new List<Card>();
     public List<Card> deckPlayer3 = new List<Card>();
     public List<Card> deckPlayer4 = new List<Card>();
+    public Card cartaExtra;
 
     [Header("Variaveis para posições dos elementos do jogo")]
     // as arrays para salvar as posições de todas as cartas que estarão no jogo - e do RectTransform dos nomes dos players
@@ -31,7 +32,7 @@ public class GameManager : MonoBehaviour
     public Transform[] cardSlotsPlayer3;
     public Transform[] cardSlotsPlayer4;
     [SerializeField] private RectTransform[] nicknamesTransform;
-    [SerializeField] private Transform slotCartaExtra;
+    public Transform slotCartaExtraTransform;
 
     [Header("Verificando se os slots de cartas estão vazios")]
     // para verificar se os slots estao vazios ou nao
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour
     public bool[] slotsDisponiveisCartasPlayer2;
     public bool[] slotsDisponiveisCartasPlayer3;
     public bool[] slotsDisponiveisCartasPlayer4;
+    public bool slotCartaExtraDisponivel = true;
 
     [Header("Verificadores para a execução dos eventos do jogo")]
     // verificadores para o controle de quando os jogadores podem discartar, comprar e abrir a loja - verificador para resetar a carta de dysfunção ao jogador passar o turno
@@ -513,6 +515,7 @@ public class GameManager : MonoBehaviour
                         // se esse slot estiver vazio
                         if (slotsDisponiveisCartasPlayer1[i] == true)
                         {
+
                             // vou mostrar a carta - salvar em qual slot ela esta - definindo a camada da carta para a do player
                             randCard.gameObject.SetActive(true);
                             randCard.handIndex = i;
@@ -534,9 +537,8 @@ public class GameManager : MonoBehaviour
                             deckPlayer1.Add(randCard);
 
 
-                            // impedindo do jogador de comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
+                            // impedindo do jogador de comprar outras cartas - liberando o jogador para discartar uma carta
                             compraCarta = false;
-                            lojaAberta = true;
                             discartaCarta = true;
 
                             // dizendo que havia pelomenos um slot vaziu 
@@ -548,21 +550,30 @@ public class GameManager : MonoBehaviour
                     }
 
                     // verificando se todos os slots do deck estão ocupados 
-                    if(todosSlotsOcupados == true)
+                    if(todosSlotsOcupados == true && slotCartaExtraDisponivel)
                     {
                         randCard.gameObject.SetActive(true);
                         randCard.gameObject.layer = layerPl1;
 
-                        randCard.transform.position = slotCartaExtra.position;
-                        randCard.transform.rotation = slotCartaExtra.rotation;
+                        randCard.handIndex = 9;             // salvar em qual slot ela esta
+                        randCard.canvas.sortingOrder = 0;   // definido qual carta fica na frente da outra
+                        slotCartaExtraDisponivel = false;
+
+                        randCard.transform.position = slotCartaExtraTransform.position;
+                        randCard.transform.rotation = slotCartaExtraTransform.rotation;
 
                         randCard.hasBeenPlayed = false;
 
                         deck.Remove(randCard);
+                        cartaExtra = randCard;
 
                         compraCarta = false;
+                        discartaCarta = true;
 
-                        Debug.Log("Criar a possibilidade de escolher a carta para descartar");
+                    }
+                    else
+                    {
+                        Debug.Log("Descarte uma carta antes de pegar outra");
                     }
 
                     break;
@@ -691,8 +702,44 @@ public class GameManager : MonoBehaviour
             Shuffle();
         }
 
+    }
 
+    public void AlterandoPosiçãoSlotExtra()
+    {
+        // dizendo que 
+        todosSlotsOcupados = true;
 
+        // verificando todos os slots de cartas
+        for (int i = 0; i < slotsDisponiveisCartasPlayer1.Length; i++)
+        {
+            
+            // se esse slot estiver vazio
+            if (slotsDisponiveisCartasPlayer1[i] == true)
+            {
+                // vou mostrar a carta - salvar em qual slot ela esta - definindo a camada da carta para a do player
+                cartaExtra.handIndex = i;
+                // definido qual carta fica na frente da outra
+                cartaExtra.canvas.sortingOrder = i;
+
+                // colocando a carta na posição e rotação certa do slot
+                cartaExtra.transform.position = cardSlotsPlayer1[i].position;
+                cartaExtra.transform.rotation = cardSlotsPlayer1[i].rotation;
+
+                // avisando que o slot esta ocupado
+                slotsDisponiveisCartasPlayer1[i] = false;
+
+                slotCartaExtraDisponivel = true;
+
+                // dizendo que havia pelomenos um slot vaziu 
+                todosSlotsOcupados = false;
+                
+                deckPlayer1.Add(cartaExtra);
+                cartaExtra = null;
+
+                //parando o looping
+                return;
+            }
+        }
     }
 
     /// <summary>
@@ -974,14 +1021,11 @@ public class GameManager : MonoBehaviour
 
                         break;
                     }
-
-                    /* Desenvolver a parte de verificação de compra de cartasem excesso
-                    else if ()
+                    else if (slotCartaExtraDisponivel == false)
                     {
-                        Debug.Log("Você ja atingiu seu limite de cartas");
+                        Debug.Log("Descarte uma carta antes de pegar outra");
                         break;
                     }
-                    */
 
                     // comprando uma carta do baralho
                     compraCarta = true;
@@ -1095,9 +1139,16 @@ public class GameManager : MonoBehaviour
         // para trocar a imagem do botao para a da carta que foi descartada
         buttonD.GetComponent<Image>().sprite = card.GetComponent<Image>().sprite;
 
-        // impedindo o jogador de discartar mais cartas 
+        // impedindo o jogador de discartar mais cartas e liberando para usar a loja 
         discartaCarta = false;
+        lojaAberta = true;
         passarTurno = true;
+
+
+        if (card.handIndex == 9)
+        {
+            slotCartaExtraDisponivel = true;
+        }
     }
 
     public void PassandoTurno()

@@ -51,9 +51,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                     // avisando que ja foi jogada a carta       
                     hasBeenPlayed = true;
 
-                    // avisando que aquele slot de carta esta vazio
-                    gm.slotsDisponiveisCartasPlayer1[handIndex] = true;
-
                     // alterando a imagem da carta expandida para vazia - desativando a carta depois que ela for para a pilha de discarte
                     cartaExpandida.GetComponent<Image>().sprite = gm.imagemVazio;
                     gameObject.SetActive(false);
@@ -61,6 +58,22 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
                     // chamando a funcao que esta no GameManager e passando essa carta junto
                     gm.deckPlayer1.Remove(this);
                     gm.MoveToDiscardPile(this);
+
+                    if (gm.slotCartaExtraDisponivel == true)
+                    {
+                        Debug.Log("nao tem carta no slot extra");
+                        gm.cartaExtra = null;
+                    }
+                    else
+                    {
+                        Debug.Log("Ainda tem carta no slot extra " + handIndex);
+                        
+                        // avisando que aquele slot de carta esta vazio
+                        gm.slotsDisponiveisCartasPlayer1[handIndex] = true;
+                        
+                        gm.AlterandoPosiçãoSlotExtra();
+                    }
+
                 }
                 break;
 
