@@ -108,8 +108,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Quaternion[] nicknamesQuaternion;
 
     [Header("Animações")]
-    [SerializeField] private Animator[] AnimMoedasPjs; 
-    
+    [SerializeField] private Animator[] AnimMoedasPjs;
+    [SerializeField] private Animator cards;
     #endregion
 
     /// <summary>
@@ -701,7 +701,7 @@ public class GameManager : MonoBehaviour
 
             Shuffle();
         }
-
+        
     }
 
     public void AlterandoPosiçãoSlotExtra()
@@ -1023,10 +1023,15 @@ public class GameManager : MonoBehaviour
                     }
                     else if (slotCartaExtraDisponivel == false)
                     {
-                        Debug.Log("Descarte uma carta antes de pegar outra");
+                        Debug.Log("Descarte uma carta antes de comprar outra");
+                        // fechando o painel de loja
+                        CloseStore();
+                        // Colocar um fedback para descartar uma carta
+                        cards.SetTrigger("piscar");
+                        //cartaExtra.GetComponent<Transform>().rotation = 45f;
                         break;
                     }
-
+                    
                     // comprando uma carta do baralho
                     compraCarta = true;
                     DrawCard();
