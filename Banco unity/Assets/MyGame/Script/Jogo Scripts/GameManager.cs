@@ -112,6 +112,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Animator cards;
     #endregion
 
+    // tesrs
+
     /// <summary>
     /// classe executada quando comeca o jogo, 1 vez e primeira que as outras
     /// </summary>
