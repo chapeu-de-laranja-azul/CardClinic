@@ -465,7 +465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00012207031}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &88032328
@@ -9525,6 +9525,7 @@ MonoBehaviour:
   rolarDado: 1
   compraCarta: 0
   lojaAberta: 0
+  eventoUsado: 0
   eventoDaLoja: 0
   discartaCarta: 0
   resetDysfuncao: 0
@@ -9539,7 +9540,7 @@ MonoBehaviour:
   layerPl4: 10
   rodada: 0
   rodadaFinal: 10
-  creditos: 00000000000000000000000000000000
+  creditos: 2f00000024000000270000003a000000
   numAleatorio: 0
   creditosFimSemana: 3
   eventoBasico: 4

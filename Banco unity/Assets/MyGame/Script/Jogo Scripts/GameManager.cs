@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool rolarDado = true;
     [SerializeField] private bool compraCarta = false;
     [SerializeField] private bool lojaAberta = false; // Não esta sendo usada
+    [SerializeField] private bool eventoUsado = false;
     [SerializeField] private bool eventoDaLoja;
     public bool discartaCarta = false;
     public bool resetDysfuncao = false;
@@ -111,8 +112,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Animator[] AnimMoedasPjs;
     [SerializeField] private Animator cards;
     #endregion
-
-    // tesrs
 
     /// <summary>
     /// classe executada quando comeca o jogo, 1 vez e primeira que as outras
@@ -538,7 +537,6 @@ public class GameManager : MonoBehaviour
                             deck.Remove(randCard);
                             deckPlayer1.Add(randCard);
 
-
                             // impedindo do jogador de comprar outras cartas - liberando o jogador para discartar uma carta
                             compraCarta = false;
                             discartaCarta = true;
@@ -551,36 +549,51 @@ public class GameManager : MonoBehaviour
                         }
                     }
 
-                    // verificando se todos os slots do deck estão ocupados 
-                    if(todosSlotsOcupados == true && slotCartaExtraDisponivel)
+                    // verificando se todos os slots do deck estão ocupados e o slot extra esta disponivel
+                    if (todosSlotsOcupados == true && slotCartaExtraDisponivel)
                     {
-                        randCard.gameObject.SetActive(true);
-                        randCard.gameObject.layer = layerPl1;
+                        randCard.gameObject.SetActive(true);  // mostrando a carta
+                        randCard.gameObject.layer = layerPl1; // definindo a camada da carta para a do player
 
                         randCard.handIndex = 9;             // salvar em qual slot ela esta
                         randCard.canvas.sortingOrder = 0;   // definido qual carta fica na frente da outra
-                        slotCartaExtraDisponivel = false;
+                        slotCartaExtraDisponivel = false;   // avisando que o slot esta ocupado
 
+                        // colocando a carta na posição e rotação certa do slot
                         randCard.transform.position = slotCartaExtraTransform.position;
                         randCard.transform.rotation = slotCartaExtraTransform.rotation;
 
-                        randCard.hasBeenPlayed = false;
+                        randCard.hasBeenPlayed = false;     // Ativando para pode clicar na carta (verificador para evitar varios clicks)
 
-                        deck.Remove(randCard);
-                        cartaExtra = randCard;
+                        deck.Remove(randCard);  // removendo a carta do deck
+                        cartaExtra = randCard;  // salvando a carta extra
 
-                        compraCarta = false;
-                        discartaCarta = true;
-
+                        compraCarta = false;    // impedindo do jogador de comprar outras cartas
+                        discartaCarta = true;   // liberando o jogador para discartar uma carta
+                        passarTurno = false;    // impedindo de passar o turno
                     }
-                    else
+                    else // se todos os slots estiverem ocupados e o slot extra nao estiver disponivel
                     {
                         Debug.Log("Descarte uma carta antes de pegar outra");
+                        // fechando o painel de loja
+                        CloseStore();
+
+                        // piscando as cartas do player 1
+                        foreach (Card card in deckPlayer1)
+                        {
+                            // chamando o animator da carta e setando o trigger de piscar
+                            card.GetComponent<Animator>().SetTrigger("piscar");
+                        }
+                        // avisando que o jogador nao pode comprar carta
+                        compraCarta = false;
+
                     }
 
                     break;
                 // jogador 2
                 case 1:
+                    // dizendo que 
+                    todosSlotsOcupados = true;
                     // verificando todos os slots de cartas
                     for (int i = 0; i < slotsDisponiveisCartasPlayer2.Length; i++)
                     {
@@ -607,18 +620,63 @@ public class GameManager : MonoBehaviour
                             deck.Remove(randCard);
                             deckPlayer2.Add(randCard);
 
-                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
+                            // impedindo do jogador de comprar outras cartas - liberando o jogador para discartar uma carta
                             compraCarta = false;
-                            lojaAberta = true;
                             discartaCarta = true;
+
+                            // dizendo que havia pelomenos um slot vaziu 
+                            todosSlotsOcupados = false;
 
                             // parando o looping
                             return;
                         }
                     }
+
+                    // verificando se todos os slots do deck estão ocupados e o slot extra esta disponivel
+                    if (todosSlotsOcupados == true && slotCartaExtraDisponivel)
+                    {
+                        randCard.gameObject.SetActive(true);  // mostrando a carta
+                        randCard.gameObject.layer = layerPl2; // definindo a camada da carta para a do player
+
+                        randCard.handIndex = 9;             // salvar em qual slot ela esta
+                        randCard.canvas.sortingOrder = 0;   // definido qual carta fica na frente da outra
+                        slotCartaExtraDisponivel = false;   // avisando que o slot esta ocupado
+
+                        // colocando a carta na posição e rotação certa do slot
+                        randCard.transform.position = slotCartaExtraTransform.position;
+                        randCard.transform.rotation = slotCartaExtraTransform.rotation;
+
+                        randCard.hasBeenPlayed = false;     // Ativando para pode clicar na carta (verificador para evitar varios clicks)
+
+                        deck.Remove(randCard);  // removendo a carta do deck
+                        cartaExtra = randCard;  // salvando a carta extra
+
+                        compraCarta = false;    // impedindo do jogador de comprar outras cartas
+                        discartaCarta = true;   // liberando o jogador para discartar uma carta
+                        passarTurno = false;    // impedindo de passar o turno
+                    }
+                    else // se todos os slots estiverem ocupados e o slot extra nao estiver disponivel
+                    {
+                        Debug.Log("Descarte uma carta antes de pegar outra");
+                        // fechando o painel de loja
+                        CloseStore();
+
+                        // piscando as cartas do player 2
+                        foreach (Card card in deckPlayer2)
+                        {
+                            // chamando o animator da carta e setando o trigger de piscar
+                            card.GetComponent<Animator>().SetTrigger("piscar");
+                        }
+                        // avisando que o jogador nao pode comprar carta
+                        compraCarta = false;
+
+                    }
+
                     break;
                 // jogador 3
                 case 2:
+                    // dizendo que 
+                    todosSlotsOcupados = true;
                     // verificando todos os slots de cartas
                     for (int i = 0; i < slotsDisponiveisCartasPlayer3.Length; i++)
                     {
@@ -645,18 +703,63 @@ public class GameManager : MonoBehaviour
                             deck.Remove(randCard);
                             deckPlayer3.Add(randCard);
 
-                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
+                            // impedindo do jogador de comprar outras cartas - liberando o jogador para discartar uma carta
                             compraCarta = false;
-                            lojaAberta = true;
                             discartaCarta = true;
+
+                            // dizendo que havia pelomenos um slot vaziu 
+                            todosSlotsOcupados = false;
 
                             // parando o looping
                             return;
                         }
                     }
+
+                    // verificando se todos os slots do deck estão ocupados e o slot extra esta disponivel
+                    if (todosSlotsOcupados == true && slotCartaExtraDisponivel)
+                    {
+                        randCard.gameObject.SetActive(true);  // mostrando a carta
+                        randCard.gameObject.layer = layerPl3; // definindo a camada da carta para a do player
+
+                        randCard.handIndex = 9;             // salvar em qual slot ela esta
+                        randCard.canvas.sortingOrder = 0;   // definido qual carta fica na frente da outra
+                        slotCartaExtraDisponivel = false;   // avisando que o slot esta ocupado
+
+                        // colocando a carta na posição e rotação certa do slot
+                        randCard.transform.position = slotCartaExtraTransform.position;
+                        randCard.transform.rotation = slotCartaExtraTransform.rotation;
+
+                        randCard.hasBeenPlayed = false;     // Ativando para pode clicar na carta (verificador para evitar varios clicks)
+
+                        deck.Remove(randCard);  // removendo a carta do deck
+                        cartaExtra = randCard;  // salvando a carta extra
+
+                        compraCarta = false;    // impedindo do jogador de comprar outras cartas
+                        discartaCarta = true;   // liberando o jogador para discartar uma carta
+                        passarTurno = false;    // impedindo de passar o turno
+                    }
+                    else // se todos os slots estiverem ocupados e o slot extra nao estiver disponivel
+                    {
+                        Debug.Log("Descarte uma carta antes de pegar outra");
+                        // fechando o painel de loja
+                        CloseStore();
+
+                        // piscando as cartas do player 3
+                        foreach (Card card in deckPlayer3)
+                        {
+                            // chamando o animator da carta e setando o trigger de piscar
+                            card.GetComponent<Animator>().SetTrigger("piscar");
+                        }
+                        // avisando que o jogador nao pode comprar carta
+                        compraCarta = false;
+
+                    }
+
                     break;
                 // jogador 4
                 case 3:
+                    // dizendo que 
+                    todosSlotsOcupados = true;
                     // verificando todos os slots de cartas
                     for (int i = 0; i < slotsDisponiveisCartasPlayer4.Length; i++)
                     {
@@ -683,15 +786,58 @@ public class GameManager : MonoBehaviour
                             deck.Remove(randCard);
                             deckPlayer4.Add(randCard);
 
-                            // impedindo do jogador comprar outras cartas - liberando o jogador para discartar uma carta e usar a loja
+                            // impedindo do jogador de comprar outras cartas - liberando o jogador para discartar uma carta
                             compraCarta = false;
-                            lojaAberta = true;
                             discartaCarta = true;
+
+                            // dizendo que havia pelomenos um slot vaziu 
+                            todosSlotsOcupados = false;
 
                             // parando o looping
                             return;
                         }
                     }
+
+                    // verificando se todos os slots do deck estão ocupados e o slot extra esta disponivel
+                    if (todosSlotsOcupados == true && slotCartaExtraDisponivel)
+                    {
+                        randCard.gameObject.SetActive(true);  // mostrando a carta
+                        randCard.gameObject.layer = layerPl4; // definindo a camada da carta para a do player
+
+                        randCard.handIndex = 9;             // salvar em qual slot ela esta
+                        randCard.canvas.sortingOrder = 0;   // definido qual carta fica na frente da outra
+                        slotCartaExtraDisponivel = false;   // avisando que o slot esta ocupado
+
+                        // colocando a carta na posição e rotação certa do slot
+                        randCard.transform.position = slotCartaExtraTransform.position;
+                        randCard.transform.rotation = slotCartaExtraTransform.rotation;
+
+                        randCard.hasBeenPlayed = false;     // Ativando para pode clicar na carta (verificador para evitar varios clicks)
+
+                        deck.Remove(randCard);  // removendo a carta do deck
+                        cartaExtra = randCard;  // salvando a carta extra
+
+                        compraCarta = false;    // impedindo do jogador de comprar outras cartas
+                        discartaCarta = true;   // liberando o jogador para discartar uma carta
+                        passarTurno = false;    // impedindo de passar o turno
+                    }
+                    else // se todos os slots estiverem ocupados e o slot extra nao estiver disponivel
+                    {
+                        Debug.Log("Descarte uma carta antes de pegar outra");
+                        // fechando o painel de loja
+                        CloseStore();
+
+                        // piscando as cartas do player 4
+                        foreach (Card card in deckPlayer4)
+                        {
+                            // chamando o animator da carta e setando o trigger de piscar
+                            card.GetComponent<Animator>().SetTrigger("piscar");
+                        }
+                        // avisando que o jogador nao pode comprar carta
+                        compraCarta = false;
+
+                    }
+
                     break;
             }
         }
@@ -708,39 +854,146 @@ public class GameManager : MonoBehaviour
 
     public void AlterandoPosiçãoSlotExtra()
     {
-        // dizendo que 
+        // dizendo que
         todosSlotsOcupados = true;
-
-        // verificando todos os slots de cartas
-        for (int i = 0; i < slotsDisponiveisCartasPlayer1.Length; i++)
+        
+        switch (rodadaDoJogador)
         {
-            
-            // se esse slot estiver vazio
-            if (slotsDisponiveisCartasPlayer1[i] == true)
-            {
-                // vou mostrar a carta - salvar em qual slot ela esta - definindo a camada da carta para a do player
-                cartaExtra.handIndex = i;
-                // definido qual carta fica na frente da outra
-                cartaExtra.canvas.sortingOrder = i;
+            // verificando qual jogador e da rodada
+            case 0:
+                // dizendo que
+                todosSlotsOcupados = true;
+                // verificando todos os slots de cartas
+                for (int i = 0; i < slotsDisponiveisCartasPlayer1.Length; i++)
+                {
+                    // se esse slot estiver vazio
+                    if (slotsDisponiveisCartasPlayer1[i] == true)
+                    {
+                        // vou mostrar a carta - salvar em qual slot ela esta - definindo a camada da carta para a do player
+                        cartaExtra.handIndex = i;
+                        // definido qual carta fica na frente da outra
+                        cartaExtra.canvas.sortingOrder = i;
 
-                // colocando a carta na posição e rotação certa do slot
-                cartaExtra.transform.position = cardSlotsPlayer1[i].position;
-                cartaExtra.transform.rotation = cardSlotsPlayer1[i].rotation;
+                        // colocando a carta na posição e rotação certa do slot
+                        cartaExtra.transform.position = cardSlotsPlayer1[i].position;
+                        cartaExtra.transform.rotation = cardSlotsPlayer1[i].rotation;
 
-                // avisando que o slot esta ocupado
-                slotsDisponiveisCartasPlayer1[i] = false;
+                        // avisando que o slot esta ocupado
+                        slotsDisponiveisCartasPlayer1[i] = false;
 
-                slotCartaExtraDisponivel = true;
+                        slotCartaExtraDisponivel = true;
 
-                // dizendo que havia pelomenos um slot vaziu 
-                todosSlotsOcupados = false;
-                
-                deckPlayer1.Add(cartaExtra);
-                cartaExtra = null;
+                        // dizendo que havia pelomenos um slot vaziu 
+                        todosSlotsOcupados = false;
 
-                //parando o looping
-                return;
-            }
+                        deckPlayer1.Add(cartaExtra);
+                        cartaExtra = null;
+
+                        
+                        //parando o looping
+                        return;
+                    }
+                }
+                break;
+            case 1:
+                // dizendo que
+                todosSlotsOcupados = true;
+                for (int i = 0; i < slotsDisponiveisCartasPlayer2.Length; i++)
+                {
+                    if (slotsDisponiveisCartasPlayer2[i] == true)
+                    {
+                        // vou mostrar a carta - salvar em qual slot ela esta - definindo a camada da carta para a do player
+                        cartaExtra.handIndex = i;
+                        // definido qual carta fica na frente da outra
+                        cartaExtra.canvas.sortingOrder = i;
+
+                        // colocando a carta na posição e rotação certa do slot
+                        cartaExtra.transform.position = cardSlotsPlayer1[i].position;
+                        cartaExtra.transform.rotation = cardSlotsPlayer1[i].rotation;
+
+                        // avisando que o slot esta ocupado
+                        slotsDisponiveisCartasPlayer2[i] = false;
+
+                        slotCartaExtraDisponivel = true;
+
+                        // dizendo que havia pelomenos um slot vaziu 
+                        todosSlotsOcupados = false;
+
+                        deckPlayer2.Add(cartaExtra);
+                        cartaExtra = null;
+
+
+                        //parando o looping
+                        return;
+                    }
+                }
+                break;
+            case 2:
+                // dizendo que
+                todosSlotsOcupados = true;
+                for (int i = 0; i < slotsDisponiveisCartasPlayer3.Length; i++)
+                {
+                    if (slotsDisponiveisCartasPlayer3[i] == true)
+                    {
+                        // vou mostrar a carta - salvar em qual slot ela esta - definindo a camada da carta para a do player
+                        cartaExtra.handIndex = i;
+                        // definido qual carta fica na frente da outra
+                        cartaExtra.canvas.sortingOrder = i;
+
+                        // colocando a carta na posição e rotação certa do slot
+                        cartaExtra.transform.position = cardSlotsPlayer1[i].position;
+                        cartaExtra.transform.rotation = cardSlotsPlayer1[i].rotation;
+
+                        // avisando que o slot esta ocupado
+                        slotsDisponiveisCartasPlayer3[i] = false;
+
+                        slotCartaExtraDisponivel = true;
+
+                        // dizendo que havia pelomenos um slot vaziu 
+                        todosSlotsOcupados = false;
+
+                        deckPlayer3.Add(cartaExtra);
+                        cartaExtra = null;
+
+
+                        //parando o looping
+                        return;
+                    }
+                }
+                break;
+            case 3:
+                // dizendo que
+                todosSlotsOcupados = true;
+                for (int i = 0; i < slotsDisponiveisCartasPlayer4.Length; i++)
+                {
+                    if (slotsDisponiveisCartasPlayer4[i] == true)
+                    {
+                        // vou mostrar a carta - salvar em qual slot ela esta - definindo a camada da carta para a do player
+                        cartaExtra.handIndex = i;
+                        // definido qual carta fica na frente da outra
+                        cartaExtra.canvas.sortingOrder = i;
+
+                        // colocando a carta na posição e rotação certa do slot
+                        cartaExtra.transform.position = cardSlotsPlayer1[i].position;
+                        cartaExtra.transform.rotation = cardSlotsPlayer1[i].rotation;
+
+                        // avisando que o slot esta ocupado
+                        slotsDisponiveisCartasPlayer4[i] = false;
+
+                        slotCartaExtraDisponivel = true;
+
+                        // dizendo que havia pelomenos um slot vaziu 
+                        todosSlotsOcupados = false;
+
+                        deckPlayer4.Add(cartaExtra);
+                        cartaExtra = null;
+
+
+                        //parando o looping
+                        return;
+                    }
+                }
+                break;
         }
     }
 
@@ -1011,6 +1264,7 @@ public class GameManager : MonoBehaviour
             // executando o evento clicado
             switch (evento)
             {
+                // evento 1 - comprar carta
                 case 1:
 
                     // verificando se tem creditos para o evento
@@ -1023,26 +1277,26 @@ public class GameManager : MonoBehaviour
 
                         break;
                     }
-                    else if (slotCartaExtraDisponivel == false)
+
+                    // verificando se o slot extra esta disponivel (para descontar os creditos)
+                    if (slotCartaExtraDisponivel == true)
                     {
-                        Debug.Log("Descarte uma carta antes de comprar outra");
-                        // fechando o painel de loja
-                        CloseStore();
-                        // Colocar um fedback para descartar uma carta
-                        cards.SetTrigger("piscar");
-                        //cartaExtra.GetComponent<Transform>().rotation = 45f;
-                        break;
+                        // reduzindo os creditos dos jogadores pela compra do evento
+                        creditos[rodadaDoJogador] = creditos[rodadaDoJogador] - eventoBasico;
+                        textCreditos[rodadaDoJogador].text = "X" + Convert.ToString(creditos[rodadaDoJogador]);
                     }
-                    
                     // comprando uma carta do baralho
                     compraCarta = true;
                     DrawCard();
 
-                    // reduzindo os creditos dos jogadores pela compra do evento
-                    creditos[rodadaDoJogador] = creditos[rodadaDoJogador] - eventoBasico;
-                    textCreditos[rodadaDoJogador].text = "X" + Convert.ToString(creditos[rodadaDoJogador]);
+                    // verificando se o slot extra esta disponivel (para impedir que o jogador possa discartar uma carta)
+                    if (slotCartaExtraDisponivel == true)
+                    {
+                        discartaCarta = false;
+                    }
 
-                    Debug.Log("Evento 1 executado");
+                    lojaAberta = false; // fechando a loja
+                    eventoUsado = true; // indicando que um evento foi usado
 
                     break;
                 case 2:
@@ -1146,12 +1400,19 @@ public class GameManager : MonoBehaviour
         // para trocar a imagem do botao para a da carta que foi descartada
         buttonD.GetComponent<Image>().sprite = card.GetComponent<Image>().sprite;
 
-        // impedindo o jogador de discartar mais cartas e liberando para usar a loja 
+        // impedindo o jogador de discartar mais cartas e liberando para usar a loja e deixando passar o turno 
         discartaCarta = false;
-        lojaAberta = true;
+        
+        if (!eventoUsado) // verificando se foi ou não usado um evento da loja
+        {
+            // abrindo a loja se não foi usado nenhum evento
+            lojaAberta = true;
+        }
+        
+        // liberando para passsar o turno
         passarTurno = true;
 
-
+        // se tiver carta no slot extra indicando que ele nao esta disponivel
         if (card.handIndex == 9)
         {
             slotCartaExtraDisponivel = true;
@@ -1162,7 +1423,8 @@ public class GameManager : MonoBehaviour
     {
         if (passarTurno == true)
         {
-            // impedindo do jogador usar a loja - escondendo a carta da dysfunção - Permitindo rolar o dado da tabela
+            // indicando que esse jogador não usou nenhum evento - impedindo do jogador usar a loja - escondendo a carta da dysfunção - Permitindo rolar o dado da tabela
+            eventoUsado = false;
             lojaAberta = false;
             resetDysfuncao = true;
             rolarDado = true;
